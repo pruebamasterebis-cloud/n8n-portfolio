@@ -7,125 +7,128 @@
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0d1117; color: #e6edf3; min-height: 100vh; }
-    cabecera { background: linear-gradient(135deg, #ea4b71 0%, #ff6d2d 100%); padding: 60px 20px; text-align: center; }
-    h1 { font-size: 2.5rem; font-weight: 700; margin-bottom: 12px; }
-    .subtexto-cab { font-size: 1.1rem; opacity: 0.9; max-width: 600px; margin: 0 auto; }
-    .etiqueta { display: inline-block; background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4); border-radius: 20px; padding: 4px 14px; font-size: 0.85rem; margin-top: 15px; }
+    header { background: linear-gradient(135deg, #ea4b71 0%, #ff6d2d 100%); padding: 60px 20px; text-align: center; }
+    header h1 { font-size: 2.5rem; font-weight: 700; margin-bottom: 12px; }
+    header p { font-size: 1.1rem; opacity: 0.9; max-width: 600px; margin: 0 auto; }
+    .etiqueta-cabecera { display: inline-block; background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4); border-radius: 20px; padding: 4px 14px; font-size: 0.85rem; margin-top: 15px; }
     .contenido-principal { max-width: 1100px; margin: 0 auto; padding: 50px 20px; }
     .titulo-seccion { text-align: center; font-size: 1.8rem; font-weight: 600; margin-bottom: 10px; color: #ff6d2d; }
     .subtitulo-seccion { text-align: center; color: #8b949e; margin-bottom: 40px; }
-    .cuadricula { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
-    .tarjeta { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 28px; transition: transform 0.2s, border-color 0.2s; position: relative; overflow: hidden; }
+    .cuadricula { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; }
+    .tarjeta { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 28px; transition: transform 0.2s, border-color 0.2s; position: relative; overflow: hidden; display: flex; flex-direction: column; }
     .tarjeta::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #ea4b71, #ff6d2d); }
     .tarjeta:hover { transform: translateY(-4px); border-color: #ff6d2d; box-shadow: 0 8px 30px rgba(255,109,45,0.2); }
     .icono { font-size: 2.2rem; margin-bottom: 14px; }
-    .tarjeta h2 { font-size: 1.25rem; font-weight: 600; margin-bottom: 10px; color: #f0f6fc; }
-    .tarjeta p { font-size: 0.9rem; color: #8b949e; line-height: 1.6; margin-bottom: 16px; }
-    .etiquetas { display: flex; flex-wrap: wrap; gap: 8px; }
+    .tarjeta h2 { font-size: 1.2rem; font-weight: 600; margin-bottom: 10px; color: #f0f6fc; }
+    .descripcion-agente { font-size: 0.9rem; color: #8b949e; line-height: 1.65; margin-bottom: 16px; flex-grow: 1; }
+    .etiquetas { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
     .etiq { background: #21262d; border: 1px solid #30363d; border-radius: 6px; padding: 3px 10px; font-size: 0.78rem; color: #ff6d2d; }
+    .version { font-size: 0.75rem; color: #6e7681; margin-bottom: 14px; }
+    .boton-descarga { display: inline-flex; align-items: center; gap: 7px; background: linear-gradient(90deg, #ea4b71, #ff6d2d); color: #fff; border-radius: 8px; padding: 9px 18px; font-size: 0.85rem; font-weight: 600; text-decoration: none; transition: opacity 0.2s; margin-top: auto; }
+    .boton-descarga:hover { opacity: 0.85; }
+    .instrucciones { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 36px; margin-top: 50px; }
+    .instrucciones h2 { font-size: 1.4rem; color: #ff6d2d; margin-bottom: 18px; }
+    .pasos { list-style: none; counter-reset: paso; }
+    .pasos li { counter-increment: paso; display: flex; align-items: flex-start; gap: 16px; margin-bottom: 16px; color: #8b949e; font-size: 0.95rem; line-height: 1.6; }
+    .pasos li::before { content: counter(paso); background: linear-gradient(135deg, #ea4b71, #ff6d2d); color: #fff; border-radius: 50%; width: 28px; height: 28px; min-width: 28px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; }
     .estadisticas { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 40px 20px; text-align: center; margin-top: 50px; }
-    .estadisticas h2 { font-size: 1.5rem; margin-bottom: 30px; color: #f0f6fc; }
+    .estadisticas h2 { font-size: 1.4rem; margin-bottom: 28px; color: #f0f6fc; }
     .cuadricula-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px; }
     .dato { padding: 20px; background: #0d1117; border-radius: 8px; border: 1px solid #30363d; }
     .numero { font-size: 2rem; font-weight: 700; color: #ff6d2d; }
-    .descripcion { font-size: 0.85rem; color: #8b949e; margin-top: 5px; }
+    .dato-desc { font-size: 0.85rem; color: #8b949e; margin-top: 5px; }
     .sobre-proyecto { margin-top: 50px; background: linear-gradient(135deg, #161b22, #21262d); border: 1px solid #30363d; border-radius: 12px; padding: 40px; text-align: center; }
-    .sobre-proyecto h2 { font-size: 1.5rem; margin-bottom: 15px; }
-    .sobre-proyecto p { color: #8b949e; line-height: 1.7; max-width: 640px; margin: 0 auto; }
-    pie { display: block; text-align: center; padding: 30px; color: #484f58; font-size: 0.85rem; border-top: 1px solid #21262d; margin-top: 60px; }
-    pie a { color: #ff6d2d; text-decoration: none; }
+    .sobre-proyecto h2 { font-size: 1.4rem; margin-bottom: 15px; }
+    .sobre-proyecto p { color: #8b949e; line-height: 1.7; max-width: 680px; margin: 0 auto; }
+    footer { text-align: center; padding: 30px; color: #484f58; font-size: 0.85rem; border-top: 1px solid #21262d; margin-top: 60px; }
+    footer a { color: #ff6d2d; text-decoration: none; }
   </style>
 </head>
 <body>
-
-<header style="background: linear-gradient(135deg, #ea4b71 0%, #ff6d2d 100%); padding: 60px 20px; text-align: center;">
+<header>
   <h1>&#9889; Portfolio n8n</h1>
-  <p class="subtexto-cab">Automatizaciones inteligentes con agentes de IA para transformar los procesos de tu empresa</p>
-  <span class="etiqueta">&#129302; Impulsado por n8n e Inteligencia Artificial</span>
+  <p>Automatizaciones inteligentes con agentes de IA para transformar los procesos de tu empresa</p>
+  <span class="etiqueta-cabecera">&#129302; Impulsado por n8n e Inteligencia Artificial</span>
 </header>
-
 <div class="contenido-principal">
   <p class="titulo-seccion">Agentes de Inteligencia Artificial</p>
-  <p class="subtitulo-seccion">Suite completa de automatizacion para la empresa Nubia &mdash; 6 agentes especializados</p>
-
+  <p class="subtitulo-seccion">Suite completa para la empresa Nubia &mdash; 6 agentes especializados listos para importar en n8n</p>
   <div class="cuadricula">
-
     <div class="tarjeta">
       <div class="icono">&#128226;</div>
       <h2>Agente de Marketing</h2>
-      <p>Automatiza campanas, analiza tendencias del mercado y genera contenido personalizado para maximizar el alcance y la notoriedad de la marca Nubia.</p>
-      <div class="etiquetas">
-        <span class="etiq">Marketing</span><span class="etiq">Nubia</span><span class="etiq">Contenido con IA</span><span class="etiq">Campanas</span>
-      </div>
+      <p class="descripcion-agente">Automatiza la creacion y distribucion de contenido en redes sociales, analiza tendencias del mercado en tiempo real y genera textos personalizados con IA. Integra herramientas de email marketing y mide el rendimiento de cada campana de forma automatica para la marca Nubia.</p>
+      <div class="etiquetas"><span class="etiq">Marketing</span><span class="etiq">Nubia</span><span class="etiq">Redes Sociales</span><span class="etiq">Contenido IA</span></div>
+      <div class="version">Archivo: Agente_de_Marketing_n8n_v4.json &bull; Version 4</div>
+      <a class="boton-descarga" href="Agente_de_Marketing_n8n_v4.json" download>&#11123; Descargar workflow</a>
     </div>
-
     <div class="tarjeta">
       <div class="icono">&#128188;</div>
       <h2>Agente de Ventas</h2>
-      <p>Gestiona el embudo de ventas, califica prospectos de forma automatica y apoya al equipo comercial con informacion en tiempo real para cerrar mas acuerdos.</p>
-      <div class="etiquetas">
-        <span class="etiq">Ventas</span><span class="etiq">Nubia</span><span class="etiq">Cualificacion de Leads</span><span class="etiq">CRM</span>
-      </div>
+      <p class="descripcion-agente">Gestiona el embudo de ventas de principio a fin: cualifica leads automaticamente segun criterios personalizados, envia seguimientos programados y notifica al equipo comercial en el momento exacto para cerrar el trato. Se integra con CRM y canales de comunicacion.</p>
+      <div class="etiquetas"><span class="etiq">Ventas</span><span class="etiq">Nubia</span><span class="etiq">CRM</span><span class="etiq">Lead Scoring</span></div>
+      <div class="version">Archivo: Agente_de_Ventas_n8n_v1.json &bull; Version 1</div>
+      <a class="boton-descarga" href="Agente_de_Ventas_n8n_v1.json" download>&#11123; Descargar workflow</a>
     </div>
-
     <div class="tarjeta">
       <div class="icono">&#128101;</div>
       <h2>Agente de RRHH</h2>
-      <p>Automatiza los procesos de seleccion, incorporacion y gestion del talento, reduciendo la carga administrativa del departamento de Recursos Humanos.</p>
-      <div class="etiquetas">
-        <span class="etiq">Recursos Humanos</span><span class="etiq">Nubia</span><span class="etiq">Incorporacion</span><span class="etiq">Seleccion</span>
-      </div>
+      <p class="descripcion-agente">Optimiza todo el ciclo de vida del empleado: publica ofertas de trabajo, filtra candidatos con IA, programa entrevistas automaticamente y gestiona el proceso de incorporacion de nuevas personas al equipo. Reduce drasticamente la carga administrativa de Recursos Humanos.</p>
+      <div class="etiquetas"><span class="etiq">Recursos Humanos</span><span class="etiq">Nubia</span><span class="etiq">Incorporacion</span><span class="etiq">Seleccion</span></div>
+      <div class="version">Archivo: Agente_de_RRHH_n8n_v1.json &bull; Version 1</div>
+      <a class="boton-descarga" href="Agente_de_RRHH_n8n_v1.json" download>&#11123; Descargar workflow</a>
     </div>
-
     <div class="tarjeta">
       <div class="icono">&#9881;</div>
       <h2>Agente de Operaciones</h2>
-      <p>Optimiza los flujos de trabajo operativos, supervisa los procesos en tiempo real y coordina automaticamente las tareas entre departamentos para mejorar la eficiencia.</p>
-      <div class="etiquetas">
-        <span class="etiq">Operaciones</span><span class="etiq">Nubia</span><span class="etiq">Procesos</span><span class="etiq">Supervision</span>
-      </div>
+      <p class="descripcion-agente">Coordina y supervisa los procesos operativos de la empresa en tiempo real. Detecta cuellos de botella, reasigna tareas automaticamente y genera alertas ante incidencias. Conecta todos los departamentos para garantizar que la operativa diaria fluya sin interrupciones.</p>
+      <div class="etiquetas"><span class="etiq">Operaciones</span><span class="etiq">Nubia</span><span class="etiq">Procesos</span><span class="etiq">Automatizacion</span></div>
+      <div class="version">Archivo: Agente_de_Operaciones_n8n_v1.json &bull; Version 1</div>
+      <a class="boton-descarga" href="Agente_de_Operaciones_n8n_v1.json" download>&#11123; Descargar workflow</a>
     </div>
-
     <div class="tarjeta">
       <div class="icono">&#128176;</div>
       <h2>Agente de Finanzas</h2>
-      <p>Automatiza los informes financieros, las conciliaciones contables y las alertas de presupuesto, con visibilidad total en tiempo real para el equipo financiero.</p>
-      <div class="etiquetas">
-        <span class="etiq">Finanzas</span><span class="etiq">Nubia</span><span class="etiq">Informes</span><span class="etiq">Presupuesto</span>
-      </div>
+      <p class="descripcion-agente">Automatiza la generacion de informes financieros periodicos, realiza conciliaciones contables y lanza alertas cuando se acercan los limites de presupuesto. Proporciona al equipo financiero un panel actualizado en tiempo real sin necesidad de intervencion manual.</p>
+      <div class="etiquetas"><span class="etiq">Finanzas</span><span class="etiq">Nubia</span><span class="etiq">Informes</span><span class="etiq">Presupuesto</span></div>
+      <div class="version">Archivo: Agente_de_Finanzas_n8n_v1.json &bull; Version 1</div>
+      <a class="boton-descarga" href="Agente_de_Finanzas_n8n_v1.json" download>&#11123; Descargar workflow</a>
     </div>
-
     <div class="tarjeta">
       <div class="icono">&#127911;</div>
       <h2>Agente de Atencion al Cliente</h2>
-      <p>Atiende las consultas de los clientes las 24 horas del dia, escala automaticamente los casos complejos y mantiene un historial completo de interacciones.</p>
-      <div class="etiquetas">
-        <span class="etiq">Atencion al Cliente</span><span class="etiq">Nubia</span><span class="etiq">24/7</span><span class="etiq">Soporte</span>
-      </div>
+      <p class="descripcion-agente">Atiende consultas de clientes las 24 horas del dia los 7 dias de la semana, clasifica y prioriza tickets automaticamente y escala los casos complejos al agente humano adecuado. Mantiene un historial completo de cada interaccion para mejorar continuamente la calidad del servicio.</p>
+      <div class="etiquetas"><span class="etiq">Atencion al Cliente</span><span class="etiq">Nubia</span><span class="etiq">24/7</span><span class="etiq">Tickets</span></div>
+      <div class="version">Archivo: Agente_de_Atencion_al_Cliente_n8n_v1.json &bull; Version 1</div>
+      <a class="boton-descarga" href="Agente_de_Atencion_al_Cliente_n8n_v1.json" download>&#11123; Descargar workflow</a>
     </div>
-
   </div>
-
+  <div class="instrucciones">
+    <h2>&#128196; Como importar un workflow en n8n</h2>
+    <ol class="pasos">
+      <li>Descarga el archivo <strong>.json</strong> del agente que quieras importar haciendo clic en el boton correspondiente.</li>
+      <li>Abre tu instancia de <strong>n8n</strong> y ve al apartado de <em>Workflows</em>.</li>
+      <li>Haz clic en el boton <strong>Importar</strong> (icono de flecha arriba) y selecciona el archivo .json descargado.</li>
+      <li>Revisa y configura tus <strong>credenciales</strong> (API keys, tokens, etc.) segun los nodos que use el workflow.</li>
+      <li>Activa el workflow con el interruptor y ya esta listo para funcionar en tu entorno.</li>
+    </ol>
+  </div>
   <div class="estadisticas">
     <h2>&#128202; Resumen del Proyecto</h2>
     <div class="cuadricula-stats">
-      <div class="dato"><div class="numero">6</div><div class="descripcion">Agentes de IA</div></div>
-      <div class="dato"><div class="numero">1</div><div class="descripcion">Empresa cliente</div></div>
-      <div class="dato"><div class="numero">6</div><div class="descripcion">Departamentos</div></div>
-      <div class="dato"><div class="numero">n8n</div><div class="descripcion">Plataforma</div></div>
+      <div class="dato"><div class="numero">6</div><div class="dato-desc">Agentes de IA</div></div>
+      <div class="dato"><div class="numero">1</div><div class="dato-desc">Empresa cliente</div></div>
+      <div class="dato"><div class="numero">6</div><div class="dato-desc">Departamentos</div></div>
+      <div class="dato"><div class="numero">n8n</div><div class="dato-desc">Plataforma</div></div>
     </div>
   </div>
-
   <div class="sobre-proyecto">
     <h2>&#128736; Sobre este Portfolio</h2>
-    <p>Este portfolio muestra una suite completa de automatizacion construida con <strong>n8n</strong> para la empresa <strong>Nubia</strong>. Cada agente ha sido disenado para un departamento especifico, trabajando de forma coordinada para digitalizar y optimizar la operacion empresarial mediante inteligencia artificial.</p>
+    <p>Suite completa de automatizacion construida con <strong>n8n</strong> para la empresa <strong>Nubia</strong>. Cada agente esta disenado para un departamento especifico y puede importarse directamente en cualquier instancia de n8n. Todos los workflows son totalmente personalizables y estan listos para usar.</p>
   </div>
-
 </div>
-
-<footer style="text-align: center; padding: 30px; color: #484f58; font-size: 0.85rem; border-top: 1px solid #21262d; margin-top: 60px;">
-  <p>Creado con &#9889; n8n por <a href="https://github.com/pruebamasterebis-cloud" style="color: #ff6d2d; text-decoration: none;">pruebamasterebis-cloud</a> &middot; 2026</p>
+<footer>
+  <p>Creado con &#9889; n8n por <a href="https://github.com/pruebamasterebis-cloud">pruebamasterebis-cloud</a> &middot; 2026</p>
 </footer>
-
 </body>
 </html>
