@@ -3,68 +3,129 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Portfolio n8n | pruebamasterebis-cloud</title>
+  <title>Portfolio n8n | Automatizaciones con IA</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0d1117; color: #e6edf3; min-height: 100vh; }
-    header { background: linear-gradient(135deg, #ea4b71 0%, #ff6d2d 100%); padding: 60px 20px; text-align: center; }
-    header h1 { font-size: 2.5rem; font-weight: 700; margin-bottom: 10px; }
-    header p { font-size: 1.1rem; opacity: 0.9; max-width: 600px; margin: 0 auto; }
-    .badge { display: inline-block; background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4); border-radius: 20px; padding: 4px 14px; font-size: 0.85rem; margin-top: 15px; }
-    main { max-width: 1100px; margin: 0 auto; padding: 50px 20px; }
-    .section-title { text-align: center; font-size: 1.8rem; font-weight: 600; margin-bottom: 10px; color: #ff6d2d; }
-    .section-subtitle { text-align: center; color: #8b949e; margin-bottom: 40px; }
-    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
-    .card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 28px; transition: transform 0.2s, border-color 0.2s; position: relative; overflow: hidden; }
-    .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #ea4b71, #ff6d2d); }
-    .card:hover { transform: translateY(-4px); border-color: #ff6d2d; }
-    .card-icon { font-size: 2.2rem; margin-bottom: 14px; }
-    .card h2 { font-size: 1.25rem; font-weight: 600; margin-bottom: 10px; color: #f0f6fc; }
-    .card p { font-size: 0.9rem; color: #8b949e; line-height: 1.6; margin-bottom: 16px; }
-    .tags { display: flex; flex-wrap: wrap; gap: 8px; }
-    .tag { background: #21262d; border: 1px solid #30363d; border-radius: 6px; padding: 3px 10px; font-size: 0.78rem; color: #ff6d2d; }
-    .stats { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 40px 20px; text-align: center; margin-top: 50px; }
-    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px; }
-    .stat-item { padding: 20px; background: #0d1117; border-radius: 8px; border: 1px solid #30363d; }
-    .stat-num { font-size: 2rem; font-weight: 700; color: #ff6d2d; }
-    .stat-label { font-size: 0.85rem; color: #8b949e; margin-top: 5px; }
-    .about { margin-top: 50px; background: linear-gradient(135deg, #161b22, #21262d); border: 1px solid #30363d; border-radius: 12px; padding: 40px; text-align: center; }
-    .about p { color: #8b949e; line-height: 1.7; max-width: 600px; margin: 0 auto; }
-    footer { text-align: center; padding: 30px; color: #484f58; font-size: 0.85rem; border-top: 1px solid #21262d; margin-top: 60px; }
-    footer a { color: #ff6d2d; text-decoration: none; }
+    cabecera { background: linear-gradient(135deg, #ea4b71 0%, #ff6d2d 100%); padding: 60px 20px; text-align: center; }
+    h1 { font-size: 2.5rem; font-weight: 700; margin-bottom: 12px; }
+    .subtexto-cab { font-size: 1.1rem; opacity: 0.9; max-width: 600px; margin: 0 auto; }
+    .etiqueta { display: inline-block; background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4); border-radius: 20px; padding: 4px 14px; font-size: 0.85rem; margin-top: 15px; }
+    .contenido-principal { max-width: 1100px; margin: 0 auto; padding: 50px 20px; }
+    .titulo-seccion { text-align: center; font-size: 1.8rem; font-weight: 600; margin-bottom: 10px; color: #ff6d2d; }
+    .subtitulo-seccion { text-align: center; color: #8b949e; margin-bottom: 40px; }
+    .cuadricula { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
+    .tarjeta { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 28px; transition: transform 0.2s, border-color 0.2s; position: relative; overflow: hidden; }
+    .tarjeta::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #ea4b71, #ff6d2d); }
+    .tarjeta:hover { transform: translateY(-4px); border-color: #ff6d2d; box-shadow: 0 8px 30px rgba(255,109,45,0.2); }
+    .icono { font-size: 2.2rem; margin-bottom: 14px; }
+    .tarjeta h2 { font-size: 1.25rem; font-weight: 600; margin-bottom: 10px; color: #f0f6fc; }
+    .tarjeta p { font-size: 0.9rem; color: #8b949e; line-height: 1.6; margin-bottom: 16px; }
+    .etiquetas { display: flex; flex-wrap: wrap; gap: 8px; }
+    .etiq { background: #21262d; border: 1px solid #30363d; border-radius: 6px; padding: 3px 10px; font-size: 0.78rem; color: #ff6d2d; }
+    .estadisticas { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 40px 20px; text-align: center; margin-top: 50px; }
+    .estadisticas h2 { font-size: 1.5rem; margin-bottom: 30px; color: #f0f6fc; }
+    .cuadricula-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px; }
+    .dato { padding: 20px; background: #0d1117; border-radius: 8px; border: 1px solid #30363d; }
+    .numero { font-size: 2rem; font-weight: 700; color: #ff6d2d; }
+    .descripcion { font-size: 0.85rem; color: #8b949e; margin-top: 5px; }
+    .sobre-proyecto { margin-top: 50px; background: linear-gradient(135deg, #161b22, #21262d); border: 1px solid #30363d; border-radius: 12px; padding: 40px; text-align: center; }
+    .sobre-proyecto h2 { font-size: 1.5rem; margin-bottom: 15px; }
+    .sobre-proyecto p { color: #8b949e; line-height: 1.7; max-width: 640px; margin: 0 auto; }
+    pie { display: block; text-align: center; padding: 30px; color: #484f58; font-size: 0.85rem; border-top: 1px solid #21262d; margin-top: 60px; }
+    pie a { color: #ff6d2d; text-decoration: none; }
   </style>
 </head>
 <body>
-<header>
+
+<header style="background: linear-gradient(135deg, #ea4b71 0%, #ff6d2d 100%); padding: 60px 20px; text-align: center;">
   <h1>&#9889; Portfolio n8n</h1>
-  <p>Automatizaciones inteligentes con agentes de IA para transformar procesos empresariales</p>
-  <span class="badge">&#129302; Powered by n8n + AI</span>
+  <p class="subtexto-cab">Automatizaciones inteligentes con agentes de IA para transformar los procesos de tu empresa</p>
+  <span class="etiqueta">&#129302; Impulsado por n8n e Inteligencia Artificial</span>
 </header>
-<main>
-  <p class="section-title">Agentes de IA</p>
-  <p class="section-subtitle">Suite completa para empresa Nubia &mdash; 6 agentes especializados</p>
-  <div class="grid">
-    <div class="card"><div class="card-icon">&#128226;</div><h2>Agente de Marketing</h2><p>Automatiza campanas, analiza tendencias y genera contenido personalizado para maximizar el alcance de la marca Nubia.</p><div class="tags"><span class="tag">Marketing</span><span class="tag">Nubia</span><span class="tag">Contenido IA</span></div></div>
-    <div class="card"><div class="card-icon">&#128188;</div><h2>Agente de Ventas</h2><p>Gestiona el pipeline de ventas, califica leads automaticamente y apoya al equipo comercial con insights en tiempo real.</p><div class="tags"><span class="tag">Ventas</span><span class="tag">Nubia</span><span class="tag">Lead Scoring</span></div></div>
-    <div class="card"><div class="card-icon">&#128101;</div><h2>Agente de RRHH</h2><p>Automatiza seleccion, onboarding y gestion del talento, reduciendo el tiempo administrativo de recursos humanos.</p><div class="tags"><span class="tag">RRHH</span><span class="tag">Nubia</span><span class="tag">Onboarding</span></div></div>
-    <div class="card"><div class="card-icon">&#9881;</div><h2>Agente de Operaciones</h2><p>Optimiza flujos operativos, monitorea procesos en tiempo real y coordina tareas entre departamentos.</p><div class="tags"><span class="tag">Operaciones</span><span class="tag">Nubia</span><span class="tag">Procesos</span></div></div>
-    <div class="card"><div class="card-icon">&#128176;</div><h2>Agente de Finanzas</h2><p>Automatiza reportes financieros, conciliaciones y alertas de presupuesto con visibilidad total en tiempo real.</p><div class="tags"><span class="tag">Finanzas</span><span class="tag">Nubia</span><span class="tag">Reportes</span></div></div>
-    <div class="card"><div class="card-icon">&#127911;</div><h2>Agente de Atencion al Cliente</h2><p>Resuelve consultas 24/7, escala casos complejos automaticamente y mantiene historial de interacciones.</p><div class="tags"><span class="tag">Atencion al Cliente</span><span class="tag">Nubia</span><span class="tag">24/7</span></div></div>
+
+<div class="contenido-principal">
+  <p class="titulo-seccion">Agentes de Inteligencia Artificial</p>
+  <p class="subtitulo-seccion">Suite completa de automatizacion para la empresa Nubia &mdash; 6 agentes especializados</p>
+
+  <div class="cuadricula">
+
+    <div class="tarjeta">
+      <div class="icono">&#128226;</div>
+      <h2>Agente de Marketing</h2>
+      <p>Automatiza campanas, analiza tendencias del mercado y genera contenido personalizado para maximizar el alcance y la notoriedad de la marca Nubia.</p>
+      <div class="etiquetas">
+        <span class="etiq">Marketing</span><span class="etiq">Nubia</span><span class="etiq">Contenido con IA</span><span class="etiq">Campanas</span>
+      </div>
+    </div>
+
+    <div class="tarjeta">
+      <div class="icono">&#128188;</div>
+      <h2>Agente de Ventas</h2>
+      <p>Gestiona el embudo de ventas, califica prospectos de forma automatica y apoya al equipo comercial con informacion en tiempo real para cerrar mas acuerdos.</p>
+      <div class="etiquetas">
+        <span class="etiq">Ventas</span><span class="etiq">Nubia</span><span class="etiq">Cualificacion de Leads</span><span class="etiq">CRM</span>
+      </div>
+    </div>
+
+    <div class="tarjeta">
+      <div class="icono">&#128101;</div>
+      <h2>Agente de RRHH</h2>
+      <p>Automatiza los procesos de seleccion, incorporacion y gestion del talento, reduciendo la carga administrativa del departamento de Recursos Humanos.</p>
+      <div class="etiquetas">
+        <span class="etiq">Recursos Humanos</span><span class="etiq">Nubia</span><span class="etiq">Incorporacion</span><span class="etiq">Seleccion</span>
+      </div>
+    </div>
+
+    <div class="tarjeta">
+      <div class="icono">&#9881;</div>
+      <h2>Agente de Operaciones</h2>
+      <p>Optimiza los flujos de trabajo operativos, supervisa los procesos en tiempo real y coordina automaticamente las tareas entre departamentos para mejorar la eficiencia.</p>
+      <div class="etiquetas">
+        <span class="etiq">Operaciones</span><span class="etiq">Nubia</span><span class="etiq">Procesos</span><span class="etiq">Supervision</span>
+      </div>
+    </div>
+
+    <div class="tarjeta">
+      <div class="icono">&#128176;</div>
+      <h2>Agente de Finanzas</h2>
+      <p>Automatiza los informes financieros, las conciliaciones contables y las alertas de presupuesto, con visibilidad total en tiempo real para el equipo financiero.</p>
+      <div class="etiquetas">
+        <span class="etiq">Finanzas</span><span class="etiq">Nubia</span><span class="etiq">Informes</span><span class="etiq">Presupuesto</span>
+      </div>
+    </div>
+
+    <div class="tarjeta">
+      <div class="icono">&#127911;</div>
+      <h2>Agente de Atencion al Cliente</h2>
+      <p>Atiende las consultas de los clientes las 24 horas del dia, escala automaticamente los casos complejos y mantiene un historial completo de interacciones.</p>
+      <div class="etiquetas">
+        <span class="etiq">Atencion al Cliente</span><span class="etiq">Nubia</span><span class="etiq">24/7</span><span class="etiq">Soporte</span>
+      </div>
+    </div>
+
   </div>
-  <div class="stats">
+
+  <div class="estadisticas">
     <h2>&#128202; Resumen del Proyecto</h2>
-    <div class="stats-grid">
-      <div class="stat-item"><div class="stat-num">6</div><div class="stat-label">Agentes de IA</div></div>
-      <div class="stat-item"><div class="stat-num">1</div><div class="stat-label">Empresa cliente</div></div>
-      <div class="stat-item"><div class="stat-num">6</div><div class="stat-label">Departamentos</div></div>
-      <div class="stat-item"><div class="stat-num">n8n</div><div class="stat-label">Plataforma</div></div>
+    <div class="cuadricula-stats">
+      <div class="dato"><div class="numero">6</div><div class="descripcion">Agentes de IA</div></div>
+      <div class="dato"><div class="numero">1</div><div class="descripcion">Empresa cliente</div></div>
+      <div class="dato"><div class="numero">6</div><div class="descripcion">Departamentos</div></div>
+      <div class="dato"><div class="numero">n8n</div><div class="descripcion">Plataforma</div></div>
     </div>
   </div>
-  <div class="about">
+
+  <div class="sobre-proyecto">
     <h2>&#128736; Sobre este Portfolio</h2>
-    <p>Suite completa de automatizacion construida con <strong>n8n</strong> para la empresa <strong>Nubia</strong>. Cada agente disenado para un departamento especifico, trabajando coordinados para digitalizar la operacion empresarial con inteligencia artificial.</p>
+    <p>Este portfolio muestra una suite completa de automatizacion construida con <strong>n8n</strong> para la empresa <strong>Nubia</strong>. Cada agente ha sido disenado para un departamento especifico, trabajando de forma coordinada para digitalizar y optimizar la operacion empresarial mediante inteligencia artificial.</p>
   </div>
-</main>
-<footer><p>Creado con &#9889; n8n por <a href="https://github.com/pruebamasterebis-cloud">pruebamasterebis-cloud</a> &middot; 2026</p></footer>
+
+</div>
+
+<footer style="text-align: center; padding: 30px; color: #484f58; font-size: 0.85rem; border-top: 1px solid #21262d; margin-top: 60px;">
+  <p>Creado con &#9889; n8n por <a href="https://github.com/pruebamasterebis-cloud" style="color: #ff6d2d; text-decoration: none;">pruebamasterebis-cloud</a> &middot; 2026</p>
+</footer>
+
 </body>
 </html>
