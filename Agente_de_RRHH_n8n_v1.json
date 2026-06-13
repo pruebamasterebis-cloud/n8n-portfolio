@@ -1,0 +1,361 @@
+{
+  "name": "Agente de RRHH",
+  "nodes": [
+    {
+      "id": "0bf90e47-130d-4d52-b4a4-a8d43a980969",
+      "name": "Candidatura recibida (form)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        300
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "nubia-candidaturas",
+        "options": {
+          "binaryPropertyName": "cv"
+        }
+      }
+    },
+    {
+      "id": "de5897e5-352f-4aa4-b62c-3bdb92be2a4a",
+      "name": "Extraer CV (PDF)",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        220,
+        300
+      ],
+      "parameters": {
+        "operation": "pdf",
+        "binaryPropertyName": "cv",
+        "options": {}
+      }
+    },
+    {
+      "id": "80775e9f-5170-471b-a284-91fabbeacba4",
+      "name": "Agente de RRHH",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        460,
+        300
+      ],
+      "parameters": {
+        "promptType": "define",
+        "text": "=Candidato: {{ $('Candidatura recibida (form)').item.json.body.nombre }}\nEmail: {{ $('Candidatura recibida (form)').item.json.body.email }}\nPuesto: {{ $('Candidatura recibida (form)').item.json.body.puesto }}\n\nCV:\n{{ $json.text }}",
+        "options": {
+          "systemMessage": "Eres el Agente de RRHH de Nubia, agencia de IA y automatizacion para pymes. Recibes el texto de un CV y el puesto al que aplica el candidato. Tu trabajo: 1) Consulta la hoja de vacantes activas para obtener los requisitos del puesto. 2) Evalua el encaje del candidato: experiencia, habilidades tecnicas y soft skills. 3) Asigna un score de 0 a 100 y decide si pasa a entrevista (apto si score >= 70). 4) Redacta el email correspondiente: invitacion a entrevista o rechazo amable y constructivo, en el tono de Nubia. Responde UNICAMENTE con un JSON valido, sin markdown: {\"apto\": boolean, \"score\": number, \"fortalezas\": string, \"gaps\": string, \"asunto_email\": string, \"cuerpo_email\": string}"
+        }
+      }
+    },
+    {
+      "id": "d564a4af-637a-4597-91f6-730abc398082",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        380,
+        520
+      ],
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list"
+        },
+        "options": {
+          "temperature": 0.4
+        }
+      }
+    },
+    {
+      "id": "b8b8de18-3e3e-4c40-8853-38848dca7453",
+      "name": "Vacantes activas",
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.5,
+      "position": [
+        540,
+        520
+      ],
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Lee las vacantes activas de Nubia con sus requisitos y criterios de evaluacion.",
+        "documentId": {
+          "__rl": true,
+          "value": "RRHH_Nubia",
+          "mode": "name"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Vacantes",
+          "mode": "name"
+        }
+      }
+    },
+    {
+      "id": "333eee7a-68fe-4fa9-8a54-2a41d623cff0",
+      "name": "Parsear evaluacion",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        300
+      ],
+      "parameters": {
+        "jsCode": "const out = JSON.parse($json.output.replace(/```json|```/g, '').trim());\nconst form = $('Candidatura recibida (form)').item.json.body;\nreturn [{ json: { ...out, nombre: form.nombre, email: form.email, puesto: form.puesto, fecha: new Date().toISOString() } }];"
+      }
+    },
+    {
+      "id": "7b5950ce-f6c9-496a-95bd-1f6074d3b083",
+      "name": "Apto para entrevista?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        940,
+        300
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "c7c4e0cd-7754-4cb3-a17a-60b20403337d",
+              "leftValue": "={{ $json.apto }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "21e57965-fee7-45c1-8d8d-2b42ae59f55e",
+      "name": "Crear hueco de entrevista",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        1160,
+        160
+      ],
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "primary",
+          "mode": "list"
+        },
+        "start": "={{ $now.plus({ days: 3 }).set({ hour: 10 }).toISO() }}",
+        "end": "={{ $now.plus({ days: 3 }).set({ hour: 11 }).toISO() }}",
+        "additionalFields": {
+          "summary": "=Entrevista: {{ $json.nombre }} ({{ $json.puesto }})",
+          "attendees": [
+            "={{ $json.email }}"
+          ]
+        }
+      }
+    },
+    {
+      "id": "2aeca353-07c5-470b-8a5e-7e7b031f59b0",
+      "name": "Email invitacion entrevista",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1380,
+        160
+      ],
+      "parameters": {
+        "sendTo": "={{ $json.email }}",
+        "subject": "={{ $json.asunto_email }}",
+        "message": "={{ $json.cuerpo_email }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "fe13d1e3-64d6-4255-b8ad-82f94353113f",
+      "name": "Email rechazo amable",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1160,
+        440
+      ],
+      "parameters": {
+        "sendTo": "={{ $json.email }}",
+        "subject": "={{ $json.asunto_email }}",
+        "message": "={{ $json.cuerpo_email }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "c55a8b0b-0ca8-409b-970a-aaf558e326a6",
+      "name": "Registrar candidato",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1600,
+        300
+      ],
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "RRHH_Nubia",
+          "mode": "name"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Candidatos",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {}
+        },
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Candidatura recibida (form)": {
+      "main": [
+        [
+          {
+            "node": "Extraer CV (PDF)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extraer CV (PDF)": {
+      "main": [
+        [
+          {
+            "node": "Agente de RRHH",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agente de RRHH": {
+      "main": [
+        [
+          {
+            "node": "Parsear evaluacion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parsear evaluacion": {
+      "main": [
+        [
+          {
+            "node": "Apto para entrevista?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Apto para entrevista?": {
+      "main": [
+        [
+          {
+            "node": "Crear hueco de entrevista",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Email rechazo amable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Crear hueco de entrevista": {
+      "main": [
+        [
+          {
+            "node": "Email invitacion entrevista",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email invitacion entrevista": {
+      "main": [
+        [
+          {
+            "node": "Registrar candidato",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email rechazo amable": {
+      "main": [
+        [
+          {
+            "node": "Registrar candidato",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Agente de RRHH",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Vacantes activas": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente de RRHH",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": [
+    {
+      "name": "Nubia"
+    },
+    {
+      "name": "RRHH"
+    }
+  ],
+  "meta": {
+    "templateCredsSetupCompleted": false
+  }
+}

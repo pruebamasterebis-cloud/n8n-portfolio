@@ -1,0 +1,388 @@
+{
+  "name": "Agente de Finanzas",
+  "nodes": [
+    {
+      "id": "15fa069f-4ac9-4498-bdf8-ce77cd1cde41",
+      "name": "Factura recibida (email)",
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        300
+      ],
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {
+          "q": "has:attachment filename:pdf"
+        },
+        "options": {
+          "downloadAttachments": true
+        }
+      }
+    },
+    {
+      "id": "3e19a07b-c70d-434a-af11-72a50281cb6c",
+      "name": "Extraer texto del PDF",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        220,
+        300
+      ],
+      "parameters": {
+        "operation": "pdf",
+        "binaryPropertyName": "attachment_0",
+        "options": {}
+      }
+    },
+    {
+      "id": "6ca1746b-8df6-41f4-bfe9-56d7c594a3eb",
+      "name": "Agente de Finanzas",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        460,
+        300
+      ],
+      "parameters": {
+        "promptType": "define",
+        "text": "=Texto de la factura:\n{{ $json.text }}",
+        "options": {
+          "systemMessage": "Eres el Agente de Finanzas de Nubia, agencia de IA y automatizacion para pymes. Recibes el texto extraido de una factura en PDF. Tu trabajo: 1) Extrae los campos: proveedor, NIF, numero de factura, fecha, base imponible, IVA y total. 2) Consulta el plan de categorias de gasto y asigna la categoria correcta. 3) Marca anomalias si las hay (importes que no cuadran, proveedor desconocido, duplicado). Responde UNICAMENTE con un JSON valido, sin markdown: {\"proveedor\": string, \"nif\": string, \"num_factura\": string, \"fecha\": string, \"base\": number, \"iva\": number, \"total\": number, \"categoria\": string, \"anomalia\": string}"
+        }
+      }
+    },
+    {
+      "id": "4ee103ec-d506-4163-a4fb-7b72457fdba4",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        380,
+        520
+      ],
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list"
+        },
+        "options": {
+          "temperature": 0.4
+        }
+      }
+    },
+    {
+      "id": "2008b7ff-631f-45d2-9d45-e93e6ee5bb05",
+      "name": "Plan de categorias",
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.5,
+      "position": [
+        540,
+        520
+      ],
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Lee el plan de categorias de gasto de Nubia para clasificar la factura.",
+        "documentId": {
+          "__rl": true,
+          "value": "Finanzas_Nubia",
+          "mode": "name"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Categorias",
+          "mode": "name"
+        }
+      }
+    },
+    {
+      "id": "31dd9646-3119-4b7c-969f-e5f3b840bfaf",
+      "name": "Libro de gastos (consulta)",
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.5,
+      "position": [
+        700,
+        520
+      ],
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Lee el libro de gastos para detectar facturas duplicadas del mismo proveedor y numero.",
+        "documentId": {
+          "__rl": true,
+          "value": "Finanzas_Nubia",
+          "mode": "name"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Gastos",
+          "mode": "name"
+        }
+      }
+    },
+    {
+      "id": "af01d774-10af-4a23-abcf-cf1dd14d1268",
+      "name": "Parsear factura",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        300
+      ],
+      "parameters": {
+        "jsCode": "const out = JSON.parse($json.output.replace(/```json|```/g, '').trim());\nreturn [{ json: { ...out, registrado: new Date().toISOString(), estado: 'pendiente' } }];"
+      }
+    },
+    {
+      "id": "97cc03a1-555d-490b-9659-2f16aae501a7",
+      "name": "Registrar en libro de gastos",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        940,
+        300
+      ],
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "Finanzas_Nubia",
+          "mode": "name"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Gastos",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {}
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "8f03bd94-dae4-4322-9ab0-641c321937a8",
+      "name": "Importe > 500 EUR?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1160,
+        300
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "25b73db6-854e-4a0d-ac9f-b9e9a269c454",
+              "leftValue": "={{ $json.total }}",
+              "rightValue": 500,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "7e8e4d23-ba11-4588-ae3a-4c16462fce44",
+      "name": "Pedir aprobacion (Slack)",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        1380,
+        200
+      ],
+      "parameters": {
+        "operation": "sendAndWait",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "#nubia-finanzas",
+          "mode": "name"
+        },
+        "message": "=:moneybag: Factura de {{ $json.proveedor }} por {{ $json.total }} EUR ({{ $json.categoria }}). Aprobar pago?",
+        "approvalOptions": {
+          "values": {
+            "approvalType": "double"
+          }
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "6e22c23a-7071-4b0e-a411-45007ae54c40",
+      "name": "Actualizar estado de pago",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1600,
+        200
+      ],
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "Finanzas_Nubia",
+          "mode": "name"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Gastos",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "num_factura": "={{ $('Parsear factura').item.json.num_factura }}",
+            "estado": "={{ $json.data.approved ? 'aprobado' : 'rechazado' }}"
+          },
+          "matchingColumns": [
+            "num_factura"
+          ]
+        },
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Factura recibida (email)": {
+      "main": [
+        [
+          {
+            "node": "Extraer texto del PDF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extraer texto del PDF": {
+      "main": [
+        [
+          {
+            "node": "Agente de Finanzas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agente de Finanzas": {
+      "main": [
+        [
+          {
+            "node": "Parsear factura",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parsear factura": {
+      "main": [
+        [
+          {
+            "node": "Registrar en libro de gastos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Registrar en libro de gastos": {
+      "main": [
+        [
+          {
+            "node": "Importe > 500 EUR?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Importe > 500 EUR?": {
+      "main": [
+        [
+          {
+            "node": "Pedir aprobacion (Slack)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pedir aprobacion (Slack)": {
+      "main": [
+        [
+          {
+            "node": "Actualizar estado de pago",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Agente de Finanzas",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Plan de categorias": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente de Finanzas",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Libro de gastos (consulta)": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente de Finanzas",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": [
+    {
+      "name": "Nubia"
+    },
+    {
+      "name": "Finanzas"
+    }
+  ],
+  "meta": {
+    "templateCredsSetupCompleted": false
+  }
+}

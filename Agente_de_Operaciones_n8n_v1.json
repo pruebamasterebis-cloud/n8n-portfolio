@@ -1,0 +1,349 @@
+{
+  "name": "Agente de Operaciones",
+  "nodes": [
+    {
+      "id": "d03a2e5d-5436-4180-afa0-0e9126010f76",
+      "name": "Cada dia a las 8:00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        300
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "days",
+              "triggerAtHour": 8
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "0892f816-8925-4e61-a23d-70b769c4bbd6",
+      "name": "Agente de Operaciones",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        260,
+        300
+      ],
+      "parameters": {
+        "promptType": "define",
+        "text": "=Genera el informe ejecutivo diario de Nubia para la fecha {{ $now.toFormat('dd/MM/yyyy') }}.",
+        "options": {
+          "systemMessage": "Eres el Agente de Operaciones de Nubia, agencia de IA y automatizacion para pymes. Actuas como supervisor de toda la empresa automatizada. Cada manana: 1) Lee los datos de cada departamento con tus herramientas: calendario editorial (Marketing), CRM (Ventas), tickets (Atencion al Cliente), libro de gastos (Finanzas) y candidatos (RRHH). 2) Calcula los KPIs del dia anterior: contenidos publicados, leads nuevos y cualificados, tickets resueltos vs escalados, gasto acumulado del mes y candidaturas procesadas. 3) Detecta alertas: tickets urgentes sin resolver, gastos anomalos, caida de leads. 4) Redacta un informe ejecutivo diario breve en espanol, con formato apto para Slack (sin markdown de cabeceras, usa emojis con moderacion): resumen general, KPIs por departamento y alertas con accion recomendada."
+        }
+      }
+    },
+    {
+      "id": "12161261-141e-483b-aaf6-3dacbd6e455a",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        100,
+        520
+      ],
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list"
+        },
+        "options": {
+          "temperature": 0.4
+        }
+      }
+    },
+    {
+      "id": "87288728-d096-4a26-8a45-f6ddaaef1133",
+      "name": "Publicar informe (Slack)",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        540,
+        300
+      ],
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "#nubia-direccion",
+          "mode": "name"
+        },
+        "text": "={{ $json.output }}",
+        "otherOptions": {}
+      }
+    },
+    {
+      "id": "23453937-6aee-49c7-97f1-d0c1bd55e06d",
+      "name": "Archivar informe",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        780,
+        300
+      ],
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "Operaciones_Nubia",
+          "mode": "name"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Informes",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "fecha": "={{ $now.toISO() }}",
+            "informe": "={{ $json.output }}"
+          }
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "33410fad-633a-42dc-a53d-dbb644ab8fa8",
+      "name": "KPIs Marketing",
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.5,
+      "position": [
+        260,
+        520
+      ],
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Lee el calendario editorial de Marketing: contenidos planificados, aprobados y publicados.",
+        "documentId": {
+          "__rl": true,
+          "value": "Calendario_Editorial",
+          "mode": "name"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Calendario",
+          "mode": "name"
+        }
+      }
+    },
+    {
+      "id": "4effa0de-4d7a-4ec3-a7bf-8ff8643db055",
+      "name": "KPIs Ventas",
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.5,
+      "position": [
+        420,
+        520
+      ],
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Lee el CRM de Ventas: leads nuevos, scores y estados.",
+        "documentId": {
+          "__rl": true,
+          "value": "CRM_Nubia",
+          "mode": "name"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Leads",
+          "mode": "name"
+        }
+      }
+    },
+    {
+      "id": "8b4a5973-748a-4239-8038-8df4f18a8a10",
+      "name": "KPIs Soporte",
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.5,
+      "position": [
+        580,
+        520
+      ],
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Lee los tickets de Atencion al Cliente: categorias, urgencias y decisiones.",
+        "documentId": {
+          "__rl": true,
+          "value": "Soporte_Nubia",
+          "mode": "name"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Tickets",
+          "mode": "name"
+        }
+      }
+    },
+    {
+      "id": "16f90c77-c1a6-4e1a-9912-8f95735bd3d1",
+      "name": "KPIs Finanzas",
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.5,
+      "position": [
+        740,
+        520
+      ],
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Lee el libro de gastos: facturas registradas, categorias, totales y estados de pago.",
+        "documentId": {
+          "__rl": true,
+          "value": "Finanzas_Nubia",
+          "mode": "name"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Gastos",
+          "mode": "name"
+        }
+      }
+    },
+    {
+      "id": "5af8b65b-a18a-4832-9397-49dc7bcb9fb4",
+      "name": "KPIs RRHH",
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.5,
+      "position": [
+        900,
+        520
+      ],
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Lee el registro de candidatos: candidaturas, scores y aptos.",
+        "documentId": {
+          "__rl": true,
+          "value": "RRHH_Nubia",
+          "mode": "name"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Candidatos",
+          "mode": "name"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Cada dia a las 8:00": {
+      "main": [
+        [
+          {
+            "node": "Agente de Operaciones",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agente de Operaciones": {
+      "main": [
+        [
+          {
+            "node": "Publicar informe (Slack)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Publicar informe (Slack)": {
+      "main": [
+        [
+          {
+            "node": "Archivar informe",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Agente de Operaciones",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "KPIs Marketing": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente de Operaciones",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "KPIs Ventas": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente de Operaciones",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "KPIs Soporte": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente de Operaciones",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "KPIs Finanzas": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente de Operaciones",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "KPIs RRHH": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente de Operaciones",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": [
+    {
+      "name": "Nubia"
+    },
+    {
+      "name": "Operaciones"
+    }
+  ],
+  "meta": {
+    "templateCredsSetupCompleted": false
+  }
+}

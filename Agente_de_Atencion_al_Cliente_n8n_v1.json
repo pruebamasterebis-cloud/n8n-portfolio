@@ -1,0 +1,373 @@
+{
+  "name": "Agente de Atencion al Cliente",
+  "nodes": [
+    {
+      "id": "a52eb584-7ab8-4c1f-9a8e-19681138bfa0",
+      "name": "Email entrante (soporte)",
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        300
+      ],
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {
+          "labelIds": [
+            "INBOX"
+          ]
+        }
+      }
+    },
+    {
+      "id": "ed0d5585-66c1-40a7-b8d1-e6628b295273",
+      "name": "Agente de Atencion al Cliente",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        240,
+        300
+      ],
+      "parameters": {
+        "promptType": "define",
+        "text": "=Email recibido de: {{ $json.from }}\nAsunto: {{ $json.subject }}\nMensaje:\n{{ $json.text }}",
+        "options": {
+          "systemMessage": "Eres el Agente de Atencion al Cliente de Nubia, agencia de IA y automatizacion para pymes. Recibes un email de un cliente. Tu trabajo: 1) Clasifica el mensaje en una categoria: consulta, incidencia, facturacion u otro. 2) Asigna urgencia: alta, media o baja. 3) Busca en la base de conocimiento (FAQ) si existe respuesta. 4) Consulta el historial de tickets del cliente. 5) Decide si puedes responder tu mismo o hay que escalar a un humano (escala siempre incidencias de urgencia alta, quejas y temas de facturacion con importes). Responde UNICAMENTE con un JSON valido, sin markdown: {\"categoria\": string, \"urgencia\": string, \"decision\": \"responder|escalar\", \"respuesta\": string, \"motivo_escalado\": string}"
+        }
+      }
+    },
+    {
+      "id": "d2618765-2bc2-4553-8729-5f51ceb0c8ac",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        160,
+        520
+      ],
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list"
+        },
+        "options": {
+          "temperature": 0.4
+        }
+      }
+    },
+    {
+      "id": "434d4ded-ef2d-4b45-8140-163b3121e791",
+      "name": "Base de conocimiento (FAQ)",
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.5,
+      "position": [
+        320,
+        520
+      ],
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Busca en la base de conocimiento de Nubia respuestas oficiales a preguntas frecuentes.",
+        "documentId": {
+          "__rl": true,
+          "value": "Soporte_Nubia",
+          "mode": "name"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "FAQ",
+          "mode": "name"
+        }
+      }
+    },
+    {
+      "id": "57143c3b-251b-4d57-9791-d49f19c92a87",
+      "name": "Historial de tickets",
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.5,
+      "position": [
+        480,
+        520
+      ],
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Lee el historial de tickets para ver interacciones previas de este cliente.",
+        "documentId": {
+          "__rl": true,
+          "value": "Soporte_Nubia",
+          "mode": "name"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Tickets",
+          "mode": "name"
+        }
+      }
+    },
+    {
+      "id": "2f170dee-a04f-4ce0-bc04-90e22215b8f7",
+      "name": "Parsear decision",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        500,
+        300
+      ],
+      "parameters": {
+        "jsCode": "const out = JSON.parse($json.output.replace(/```json|```/g, '').trim());\nconst mail = $('Email entrante (soporte)').item.json;\nreturn [{ json: { ...out, from: mail.from, subject: mail.subject, threadId: mail.threadId, fecha: new Date().toISOString() } }];"
+      }
+    },
+    {
+      "id": "6f080962-f031-4305-904b-4d2078762a35",
+      "name": "Enrutar decision",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        760,
+        300
+      ],
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "typeValidation": "strict"
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "eefd2c5c-e781-47d3-aff9-a4cc42a7a254",
+                    "leftValue": "={{ $json.decision }}",
+                    "rightValue": "responder",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              },
+              "outputKey": "responder"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "typeValidation": "strict"
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "2740341f-9f80-4e35-8910-bc21f3bcfc41",
+                    "leftValue": "={{ $json.decision }}",
+                    "rightValue": "escalar",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              },
+              "outputKey": "escalar"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "eab36f90-959f-405d-8b8e-71d2bd1e7953",
+      "name": "Responder al cliente",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1000,
+        200
+      ],
+      "parameters": {
+        "operation": "reply",
+        "messageId": "={{ $json.threadId }}",
+        "message": "={{ $json.respuesta }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "58966864-ca9c-4a57-a5f9-13432fa1cb2a",
+      "name": "Escalar a humano (Slack)",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        1000,
+        420
+      ],
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "#nubia-soporte",
+          "mode": "name"
+        },
+        "text": "=:rotating_light: Ticket escalado ({{ $json.urgencia }})\nDe: {{ $json.from }}\nAsunto: {{ $json.subject }}\nMotivo: {{ $json.motivo_escalado }}",
+        "otherOptions": {}
+      }
+    },
+    {
+      "id": "05b82ddb-0cd2-4fb4-ba96-bfdc4aecbc2e",
+      "name": "Registrar ticket",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1240,
+        300
+      ],
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "Soporte_Nubia",
+          "mode": "name"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Tickets",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {}
+        },
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Email entrante (soporte)": {
+      "main": [
+        [
+          {
+            "node": "Agente de Atencion al Cliente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agente de Atencion al Cliente": {
+      "main": [
+        [
+          {
+            "node": "Parsear decision",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parsear decision": {
+      "main": [
+        [
+          {
+            "node": "Enrutar decision",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enrutar decision": {
+      "main": [
+        [
+          {
+            "node": "Responder al cliente",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Escalar a humano (Slack)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Responder al cliente": {
+      "main": [
+        [
+          {
+            "node": "Registrar ticket",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Escalar a humano (Slack)": {
+      "main": [
+        [
+          {
+            "node": "Registrar ticket",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Agente de Atencion al Cliente",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Base de conocimiento (FAQ)": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente de Atencion al Cliente",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Historial de tickets": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente de Atencion al Cliente",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": [
+    {
+      "name": "Nubia"
+    },
+    {
+      "name": "Atencion al Cliente"
+    }
+  ],
+  "meta": {
+    "templateCredsSetupCompleted": false
+  }
+}

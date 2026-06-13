@@ -1,0 +1,382 @@
+{
+  "name": "Agente de Ventas",
+  "nodes": [
+    {
+      "id": "a63faa4e-e9c8-4bbb-92eb-3869f783a15b",
+      "name": "Nuevo lead (formulario web)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        300
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "nubia-leads",
+        "options": {}
+      }
+    },
+    {
+      "id": "00b9600b-9363-4ddb-828c-e135cf5872ad",
+      "name": "Normalizar lead",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        220,
+        300
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5ba0a6b2-6b40-43a0-90a8-7055397beba7",
+              "name": "nombre",
+              "type": "string",
+              "value": "={{ $json.body.nombre }}"
+            },
+            {
+              "id": "c43c94a3-ea5d-4fad-a96f-ae4856264cea",
+              "name": "email",
+              "type": "string",
+              "value": "={{ $json.body.email }}"
+            },
+            {
+              "id": "92ce04d0-e320-4b10-9bd5-f9388af2f9f2",
+              "name": "empresa",
+              "type": "string",
+              "value": "={{ $json.body.empresa }}"
+            },
+            {
+              "id": "b980291e-7c17-4ead-9c50-aeebb420bdfd",
+              "name": "mensaje",
+              "type": "string",
+              "value": "={{ $json.body.mensaje }}"
+            },
+            {
+              "id": "6687c49f-c2f8-4830-9d4e-222ae74b5287",
+              "name": "fecha",
+              "type": "string",
+              "value": "={{ $now.toISO() }}"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "b51a8658-758f-4b28-921f-379dba92d2c7",
+      "name": "Agente de Ventas",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        460,
+        300
+      ],
+      "parameters": {
+        "promptType": "define",
+        "text": "=Lead nuevo:\nNombre: {{ $json.nombre }}\nEmail: {{ $json.email }}\nEmpresa: {{ $json.empresa }}\nMensaje: {{ $json.mensaje }}",
+        "options": {
+          "systemMessage": "Eres el Agente de Ventas de Nubia, agencia de IA y automatizacion para pymes. Recibes un lead del formulario web. Tu trabajo: 1) Investiga la empresa del lead con la herramienta de busqueda web. 2) Consulta el CRM para ver si ya existe historial. 3) Cualifica el lead con criterios BANT y asigna un score de 0 a 100. 4) Redacta un email de primer contacto personalizado, en el tono de Nubia: profesional, cercano y orientado a resultados. Responde UNICAMENTE con un JSON valido, sin markdown, con esta estructura: {\"score\": number, \"segmento\": \"caliente|tibio|frio\", \"resumen\": string, \"asunto_email\": string, \"cuerpo_email\": string}"
+        }
+      }
+    },
+    {
+      "id": "eb8e2c31-05bd-4d43-8de8-8f5cb1a8c4a2",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        380,
+        520
+      ],
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list"
+        },
+        "options": {
+          "temperature": 0.4
+        }
+      }
+    },
+    {
+      "id": "d269d4bf-e433-4663-9fd5-6bd88a849a04",
+      "name": "Buscar empresa (web)",
+      "type": "@n8n/n8n-nodes-langchain.toolSerpApi",
+      "typeVersion": 1,
+      "position": [
+        540,
+        520
+      ],
+      "parameters": {
+        "options": {}
+      }
+    },
+    {
+      "id": "2c4a05a4-d4df-4a69-b81f-d76256592838",
+      "name": "Consultar CRM",
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.5,
+      "position": [
+        700,
+        520
+      ],
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Lee el CRM de Nubia para comprobar si el lead o su empresa ya existen y con que estado.",
+        "documentId": {
+          "__rl": true,
+          "value": "CRM_Nubia",
+          "mode": "name"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Leads",
+          "mode": "name"
+        }
+      }
+    },
+    {
+      "id": "d66b6112-b215-4e36-8beb-1af079771751",
+      "name": "Parsear cualificacion",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        300
+      ],
+      "parameters": {
+        "jsCode": "const out = JSON.parse($json.output.replace(/```json|```/g, '').trim());\nreturn [{ json: { ...$('Normalizar lead').item.json, ...out } }];"
+      }
+    },
+    {
+      "id": "9f2bf53a-3b76-462c-9c27-3eae9f9b460f",
+      "name": "Lead cualificado?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        940,
+        300
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "f6449e52-4f3a-4973-a088-e4eb3197a229",
+              "leftValue": "={{ $json.score }}",
+              "rightValue": 60,
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "2920f2f9-41c2-4cf9-bd96-abe7d9b8d790",
+      "name": "Enviar email de contacto",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1160,
+        200
+      ],
+      "parameters": {
+        "sendTo": "={{ $json.email }}",
+        "subject": "={{ $json.asunto_email }}",
+        "message": "={{ $json.cuerpo_email }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "1953b481-7fa5-4ea5-8d0a-1986aeffc79d",
+      "name": "Avisar a ventas (Slack)",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        1380,
+        200
+      ],
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "#nubia-ventas",
+          "mode": "name"
+        },
+        "text": "=:fire: Lead caliente: {{ $json.nombre }} ({{ $json.empresa }}) — score {{ $json.score }}.\n{{ $json.resumen }}",
+        "otherOptions": {}
+      }
+    },
+    {
+      "id": "d93b8799-04cf-4557-b7f5-a4bffedff884",
+      "name": "Registrar en CRM",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1600,
+        300
+      ],
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "CRM_Nubia",
+          "mode": "name"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Leads",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {}
+        },
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Nuevo lead (formulario web)": {
+      "main": [
+        [
+          {
+            "node": "Normalizar lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalizar lead": {
+      "main": [
+        [
+          {
+            "node": "Agente de Ventas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agente de Ventas": {
+      "main": [
+        [
+          {
+            "node": "Parsear cualificacion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parsear cualificacion": {
+      "main": [
+        [
+          {
+            "node": "Lead cualificado?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lead cualificado?": {
+      "main": [
+        [
+          {
+            "node": "Enviar email de contacto",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Registrar en CRM",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar email de contacto": {
+      "main": [
+        [
+          {
+            "node": "Avisar a ventas (Slack)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Avisar a ventas (Slack)": {
+      "main": [
+        [
+          {
+            "node": "Registrar en CRM",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Agente de Ventas",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar empresa (web)": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente de Ventas",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Consultar CRM": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente de Ventas",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": [
+    {
+      "name": "Nubia"
+    },
+    {
+      "name": "Ventas"
+    }
+  ],
+  "meta": {
+    "templateCredsSetupCompleted": false
+  }
+}
