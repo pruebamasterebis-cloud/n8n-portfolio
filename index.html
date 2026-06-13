@@ -2,133 +2,966 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Portfolio n8n | Automatizaciones con IA</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agentes de IA con n8n â Nubia</title>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0d1117; color: #e6edf3; min-height: 100vh; }
-    header { background: linear-gradient(135deg, #ea4b71 0%, #ff6d2d 100%); padding: 60px 20px; text-align: center; }
-    header h1 { font-size: 2.5rem; font-weight: 700; margin-bottom: 12px; }
-    header p { font-size: 1.1rem; opacity: 0.9; max-width: 600px; margin: 0 auto; }
-    .etiqueta-cabecera { display: inline-block; background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4); border-radius: 20px; padding: 4px 14px; font-size: 0.85rem; margin-top: 15px; }
-    .contenido-principal { max-width: 1100px; margin: 0 auto; padding: 50px 20px; }
-    .titulo-seccion { text-align: center; font-size: 1.8rem; font-weight: 600; margin-bottom: 10px; color: #ff6d2d; }
-    .subtitulo-seccion { text-align: center; color: #8b949e; margin-bottom: 40px; }
-    .cuadricula { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; }
-    .tarjeta { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 28px; transition: transform 0.2s, border-color 0.2s; position: relative; overflow: hidden; display: flex; flex-direction: column; }
-    .tarjeta::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #ea4b71, #ff6d2d); }
-    .tarjeta:hover { transform: translateY(-4px); border-color: #ff6d2d; box-shadow: 0 8px 30px rgba(255,109,45,0.2); }
-    .icono { font-size: 2.2rem; margin-bottom: 14px; }
-    .tarjeta h2 { font-size: 1.2rem; font-weight: 600; margin-bottom: 10px; color: #f0f6fc; }
-    .descripcion-agente { font-size: 0.9rem; color: #8b949e; line-height: 1.65; margin-bottom: 16px; flex-grow: 1; }
-    .etiquetas { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
-    .etiq { background: #21262d; border: 1px solid #30363d; border-radius: 6px; padding: 3px 10px; font-size: 0.78rem; color: #ff6d2d; }
-    .version { font-size: 0.75rem; color: #6e7681; margin-bottom: 14px; }
-    .boton-descarga { display: inline-flex; align-items: center; gap: 7px; background: linear-gradient(90deg, #ea4b71, #ff6d2d); color: #fff; border-radius: 8px; padding: 9px 18px; font-size: 0.85rem; font-weight: 600; text-decoration: none; transition: opacity 0.2s; margin-top: auto; }
-    .boton-descarga:hover { opacity: 0.85; }
-    .instrucciones { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 36px; margin-top: 50px; }
-    .instrucciones h2 { font-size: 1.4rem; color: #ff6d2d; margin-bottom: 18px; }
-    .pasos { list-style: none; counter-reset: paso; }
-    .pasos li { counter-increment: paso; display: flex; align-items: flex-start; gap: 16px; margin-bottom: 16px; color: #8b949e; font-size: 0.95rem; line-height: 1.6; }
-    .pasos li::before { content: counter(paso); background: linear-gradient(135deg, #ea4b71, #ff6d2d); color: #fff; border-radius: 50%; width: 28px; height: 28px; min-width: 28px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; }
-    .estadisticas { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 40px 20px; text-align: center; margin-top: 50px; }
-    .estadisticas h2 { font-size: 1.4rem; margin-bottom: 28px; color: #f0f6fc; }
-    .cuadricula-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px; }
-    .dato { padding: 20px; background: #0d1117; border-radius: 8px; border: 1px solid #30363d; }
-    .numero { font-size: 2rem; font-weight: 700; color: #ff6d2d; }
-    .dato-desc { font-size: 0.85rem; color: #8b949e; margin-top: 5px; }
-    .sobre-proyecto { margin-top: 50px; background: linear-gradient(135deg, #161b22, #21262d); border: 1px solid #30363d; border-radius: 12px; padding: 40px; text-align: center; }
-    .sobre-proyecto h2 { font-size: 1.4rem; margin-bottom: 15px; }
-    .sobre-proyecto p { color: #8b949e; line-height: 1.7; max-width: 680px; margin: 0 auto; }
-    footer { text-align: center; padding: 30px; color: #484f58; font-size: 0.85rem; border-top: 1px solid #21262d; margin-top: 60px; }
-    footer a { color: #ff6d2d; text-decoration: none; }
+    :root {
+      --bg: #0d0f14;
+      --surface: #151820;
+      --surface2: #1e2230;
+      --border: #2a2f42;
+      --accent: #6c63ff;
+      --accent2: #00d4aa;
+      --accent3: #ff6b6b;
+      --text: #e8eaf2;
+      --muted: #7a80a0;
+      --tag-bg: #1e2230;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      line-height: 1.6;
+    }
+
+    /* ââ HERO ââ */
+    header {
+      text-align: center;
+      padding: 80px 24px 60px;
+      background: radial-gradient(ellipse at 50% 0%, #1a1040 0%, var(--bg) 70%);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .badge {
+      display: inline-block;
+      background: rgba(108,99,255,.15);
+      border: 1px solid rgba(108,99,255,.4);
+      color: #a39bff;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      padding: 4px 14px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+    }
+
+    header h1 {
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 700;
+      letter-spacing: -.02em;
+      background: linear-gradient(135deg, #fff 30%, #a39bff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 16px;
+    }
+
+    header p {
+      color: var(--muted);
+      font-size: 1.05rem;
+      max-width: 620px;
+      margin: 0 auto 32px;
+    }
+
+    .stack-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+    }
+
+    .pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 5px 14px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .pill span { font-size: 15px; }
+
+    /* ââ GRID ââ */
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 60px 24px 100px;
+    }
+
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 36px;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 24px;
+    }
+
+    /* ââ CARD ââ */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: border-color .2s, transform .2s, box-shadow .2s;
+    }
+
+    .card:hover {
+      border-color: var(--accent);
+      transform: translateY(-4px);
+      box-shadow: 0 16px 40px rgba(108,99,255,.12);
+    }
+
+    .card-header {
+      padding: 24px 24px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+    }
+
+    .icon-wrap {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      flex-shrink: 0;
+    }
+
+    .card-header-text h2 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .trigger-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 10px;
+    }
+
+    .card-body {
+      padding: 20px 24px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .card-desc {
+      color: var(--muted);
+      font-size: .93rem;
+    }
+
+    /* Flow steps */
+    .flow-title {
+      font-size: .75rem;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+
+    .flow {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .step {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      position: relative;
+    }
+
+    .step:not(:last-child)::before {
+      content: '';
+      position: absolute;
+      left: 14px;
+      top: 28px;
+      width: 1px;
+      height: calc(100% + 2px);
+      background: var(--border);
+    }
+
+    .step-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      flex-shrink: 0;
+      color: var(--muted);
+      z-index: 1;
+    }
+
+    .step-content {
+      padding: 4px 0 16px;
+    }
+
+    .step-label {
+      font-size: .85rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 2px;
+    }
+
+    .step-detail {
+      font-size: .8rem;
+      color: var(--muted);
+    }
+
+    /* Tools */
+    .tools-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .tool-tag {
+      background: var(--tag-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 3px 10px;
+      font-size: .75rem;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .tool-tag .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+    }
+
+    /* Colors per agent */
+    .c-marketing  { --ac: #6c63ff; --acl: rgba(108,99,255,.15); }
+    .c-ops        { --ac: #00d4aa; --acl: rgba(0,212,170,.15); }
+    .c-rrhh       { --ac: #ff9f43; --acl: rgba(255,159,67,.15); }
+    .c-ventas     { --ac: #ff6b6b; --acl: rgba(255,107,107,.15); }
+    .c-soporte    { --ac: #54a0ff; --acl: rgba(84,160,255,.15); }
+    .c-finanzas   { --ac: #5f27cd; --acl: rgba(95,39,205,.15); }
+
+    .card .icon-wrap  { background: var(--acl); }
+    .card .step-num   { border-color: var(--ac); color: var(--ac); }
+    .card:hover       { border-color: var(--ac); box-shadow: 0 16px 40px color-mix(in srgb, var(--ac) 15%, transparent); }
+    .trigger-badge    { background: var(--acl); color: var(--ac); border: 1px solid color-mix(in srgb, var(--ac) 30%, transparent); }
+    .tool-tag .dot    { background: var(--ac); }
+    .card-header-text h2 { color: var(--ac); }
+
+    /* Outcomes */
+    .outcomes {
+      background: var(--surface2);
+      border-radius: 10px;
+      padding: 12px 14px;
+    }
+
+    .outcomes-title {
+      font-size: .75rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .outcome-item {
+      font-size: .82rem;
+      color: var(--muted);
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+
+    .outcome-item::before {
+      content: 'â';
+      color: var(--ac);
+      font-size: .85rem;
+      flex-shrink: 0;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 40px 24px;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: .85rem;
+    }
+
+    footer a { color: var(--accent); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    @media (max-width: 720px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+  
+    /* ââ DOWNLOAD BUTTON ââ */
+    .card-footer {
+      padding: 0 24px 24px;
+    }
+    .btn-download {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      justify-content: center;
+      background: linear-gradient(135deg, var(--accent) 0%, #9c95ff 100%);
+      color: #fff;
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 11px 20px;
+      border-radius: 10px;
+      text-decoration: none;
+      transition: opacity 0.2s, transform 0.15s;
+      letter-spacing: 0.02em;
+    }
+    .btn-download:hover {
+      opacity: 0.88;
+      transform: translateY(-1px);
+    }
+    .btn-download svg {
+      flex-shrink: 0;
+    }
+
   </style>
 </head>
 <body>
+
+<!-- ââââââââââââââ HERO ââââââââââââââ -->
 <header>
-  <h1>&#9889; Portfolio n8n</h1>
-  <p>Automatizaciones inteligentes con agentes de IA para transformar los procesos de tu empresa</p>
-  <span class="etiqueta-cabecera">&#129302; Impulsado por n8n e Inteligencia Artificial</span>
+  <div class="badge">Portfolio Â· AutomatizaciÃ³n con IA</div>
+  <h1>6 Agentes Inteligentes con n8n</h1>
+  <p>
+    Suite completa de agentes de IA para automatizar los departamentos clave de una PYME.
+    Cada agente combina LLM, herramientas externas y lÃ³gica condicional para operar de forma autÃ³noma.
+  </p>
+  <div class="stack-pills">
+    <div class="pill"><span>ð</span> n8n</div>
+    <div class="pill"><span>ð¤</span> GPT-4o-mini</div>
+    <div class="pill"><span>ð</span> Google Sheets</div>
+    <div class="pill"><span>ð¬</span> Slack</div>
+    <div class="pill"><span>ð§</span> Gmail</div>
+    <div class="pill"><span>ð</span> Google Calendar</div>
+    <div class="pill"><span>ð</span> SerpAPI</div>
+  </div>
 </header>
-<div class="contenido-principal">
-  <p class="titulo-seccion">Agentes de Inteligencia Artificial</p>
-  <p class="subtitulo-seccion">Suite completa para la empresa Nubia &mdash; 6 agentes especializados listos para importar en n8n</p>
-  <div class="cuadricula">
-    <div class="tarjeta">
-      <div class="icono">&#128226;</div>
-      <h2>Agente de Marketing</h2>
-      <p class="descripcion-agente">Automatiza la creacion y distribucion de contenido en redes sociales, analiza tendencias del mercado en tiempo real y genera textos personalizados con IA. Integra herramientas de email marketing y mide el rendimiento de cada campana de forma automatica para la marca Nubia.</p>
-      <div class="etiquetas"><span class="etiq">Marketing</span><span class="etiq">Nubia</span><span class="etiq">Redes Sociales</span><span class="etiq">Contenido IA</span></div>
-      <div class="version">Archivo: Agente_de_Marketing_n8n_v4.json &bull; Version 4</div>
-      <a class="boton-descarga" href="Agente_de_Marketing_n8n_v4.json" download>&#11123; Descargar workflow</a>
-    </div>
-    <div class="tarjeta">
-      <div class="icono">&#128188;</div>
-      <h2>Agente de Ventas</h2>
-      <p class="descripcion-agente">Gestiona el embudo de ventas de principio a fin: cualifica leads automaticamente segun criterios personalizados, envia seguimientos programados y notifica al equipo comercial en el momento exacto para cerrar el trato. Se integra con CRM y canales de comunicacion.</p>
-      <div class="etiquetas"><span class="etiq">Ventas</span><span class="etiq">Nubia</span><span class="etiq">CRM</span><span class="etiq">Lead Scoring</span></div>
-      <div class="version">Archivo: Agente_de_Ventas_n8n_v1.json &bull; Version 1</div>
-      <a class="boton-descarga" href="Agente_de_Ventas_n8n_v1.json" download>&#11123; Descargar workflow</a>
-    </div>
-    <div class="tarjeta">
-      <div class="icono">&#128101;</div>
-      <h2>Agente de RRHH</h2>
-      <p class="descripcion-agente">Optimiza todo el ciclo de vida del empleado: publica ofertas de trabajo, filtra candidatos con IA, programa entrevistas automaticamente y gestiona el proceso de incorporacion de nuevas personas al equipo. Reduce drasticamente la carga administrativa de Recursos Humanos.</p>
-      <div class="etiquetas"><span class="etiq">Recursos Humanos</span><span class="etiq">Nubia</span><span class="etiq">Incorporacion</span><span class="etiq">Seleccion</span></div>
-      <div class="version">Archivo: Agente_de_RRHH_n8n_v1.json &bull; Version 1</div>
-      <a class="boton-descarga" href="Agente_de_RRHH_n8n_v1.json" download>&#11123; Descargar workflow</a>
-    </div>
-    <div class="tarjeta">
-      <div class="icono">&#9881;</div>
-      <h2>Agente de Operaciones</h2>
-      <p class="descripcion-agente">Coordina y supervisa los procesos operativos de la empresa en tiempo real. Detecta cuellos de botella, reasigna tareas automaticamente y genera alertas ante incidencias. Conecta todos los departamentos para garantizar que la operativa diaria fluya sin interrupciones.</p>
-      <div class="etiquetas"><span class="etiq">Operaciones</span><span class="etiq">Nubia</span><span class="etiq">Procesos</span><span class="etiq">Automatizacion</span></div>
-      <div class="version">Archivo: Agente_de_Operaciones_n8n_v1.json &bull; Version 1</div>
-      <a class="boton-descarga" href="Agente_de_Operaciones_n8n_v1.json" download>&#11123; Descargar workflow</a>
-    </div>
-    <div class="tarjeta">
-      <div class="icono">&#128176;</div>
-      <h2>Agente de Finanzas</h2>
-      <p class="descripcion-agente">Automatiza la generacion de informes financieros periodicos, realiza conciliaciones contables y lanza alertas cuando se acercan los limites de presupuesto. Proporciona al equipo financiero un panel actualizado en tiempo real sin necesidad de intervencion manual.</p>
-      <div class="etiquetas"><span class="etiq">Finanzas</span><span class="etiq">Nubia</span><span class="etiq">Informes</span><span class="etiq">Presupuesto</span></div>
-      <div class="version">Archivo: Agente_de_Finanzas_n8n_v1.json &bull; Version 1</div>
-      <a class="boton-descarga" href="Agente_de_Finanzas_n8n_v1.json" download>&#11123; Descargar workflow</a>
-    </div>
-    <div class="tarjeta">
-      <div class="icono">&#127911;</div>
-      <h2>Agente de Atencion al Cliente</h2>
-      <p class="descripcion-agente">Atiende consultas de clientes las 24 horas del dia los 7 dias de la semana, clasifica y prioriza tickets automaticamente y escala los casos complejos al agente humano adecuado. Mantiene un historial completo de cada interaccion para mejorar continuamente la calidad del servicio.</p>
-      <div class="etiquetas"><span class="etiq">Atencion al Cliente</span><span class="etiq">Nubia</span><span class="etiq">24/7</span><span class="etiq">Tickets</span></div>
-      <div class="version">Archivo: Agente_de_Atencion_al_Cliente_n8n_v1.json &bull; Version 1</div>
-      <a class="boton-descarga" href="Agente_de_Atencion_al_Cliente_n8n_v1.json" download>&#11123; Descargar workflow</a>
+
+<!-- ââââââââââââââ CARDS ââââââââââââââ -->
+<main>
+  <h2 class="section-title">Agentes</h2>
+  <div class="grid">
+
+    <!-- ââ 1. MARKETING ââ -->
+    <article class="card c-marketing">
+      <div class="card-header">
+        <div class="icon-wrap">ð£</div>
+        <div class="card-header-text">
+          <h2>Agente de Marketing</h2>
+          <span class="trigger-badge">â° Schedule Â· 9:00 AM diario</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <p class="card-desc">
+          Automatiza la creaciÃ³n y aprobaciÃ³n de contenido para redes sociales a partir de un
+          calendario editorial en Google Sheets. El agente investiga tendencias, redacta el
+          contenido ajustado a la marca y espera aprobaciÃ³n humana antes de marcar como publicado.
+        </p>
+
+        <div>
+          <div class="flow-title">Flujo paso a paso</div>
+          <div class="flow">
+            <div class="step">
+              <div class="step-num">1</div>
+              <div class="step-content">
+                <div class="step-label">Lectura del calendario editorial</div>
+                <div class="step-detail">Filtra filas con estado <em>Planificado</em> cuya fecha de publicaciÃ³n coincide con hoy.</div>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">2</div>
+              <div class="step-content">
+                <div class="step-label">CondiciÃ³n: Â¿hay contenido pendiente?</div>
+                <div class="step-detail">Si no hay items para hoy, el workflow termina silenciosamente.</div>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">3</div>
+              <div class="step-content">
+                <div class="step-label">Agente LLM genera el contenido</div>
+                <div class="step-detail">Recibe tema, pilar, canal y formato. Busca tendencias en web (SerpAPI) y consulta publicaciones anteriores para evitar repeticiones. Devuelve JSON con titular, cuerpo y hashtags.</div>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">4</div>
+              <div class="step-content">
+                <div class="step-label">AprobaciÃ³n humana vÃ­a Slack</div>
+                <div class="step-detail">EnvÃ­a el contenido al canal <code>#nubia-marketing</code> con botones Aprobar / Rechazar y espera respuesta.</div>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">5</div>
+              <div class="step-content">
+                <div class="step-label">Actualizar Google Sheets</div>
+                <div class="step-detail">Marca la fila como <em>Publicado</em> o <em>Rechazado</em> segÃºn la decisiÃ³n del revisor.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="outcomes">
+          <div class="outcomes-title">Resultados clave</div>
+          <div class="outcome-item">Contenido redactado con voz de marca consistente</div>
+          <div class="outcome-item">Cero repeticiones gracias a la memoria de publicaciones</div>
+          <div class="outcome-item">AprobaciÃ³n en un clic sin salir de Slack</div>
+        </div>
+
+        <div>
+          <div class="flow-title">Herramientas integradas</div>
+          <div class="tools-list">
+            <div class="tool-tag"><span class="dot"></span> n8n Schedule Trigger</div>
+            <div class="tool-tag"><span class="dot"></span> Google Sheets (r/w)</div>
+            <div class="tool-tag"><span class="dot"></span> LangChain Agent</div>
+            <div class="tool-tag"><span class="dot"></span> GPT-4o-mini</div>
+            <div class="tool-tag"><span class="dot"></span> SerpAPI</div>
+            <div class="tool-tag"><span class="dot"></span> Slack Send & Wait</div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="card-footer">
+        <a class="btn-download" href="Agente_de_Marketing_n8n_v4.json" download>
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Descargar Workflow â Marketing
+        </a>
+      </div>
+    </article>
+
+    <!-- ââ 2. OPERACIONES ââ -->
+    <article class="card c-ops">
+      <div class="card-header">
+        <div class="icon-wrap">ð</div>
+        <div class="card-header-text">
+          <h2>Agente de Operaciones</h2>
+          <span class="trigger-badge">â° Schedule Â· 8:00 AM diario</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <p class="card-desc">
+          ActÃºa como <em>supervisor digital</em> de toda la empresa. Cada maÃ±ana lee los KPIs de los
+          5 departamentos, detecta alertas y genera un informe ejecutivo que se publica en Slack y
+          se archiva automÃ¡ticamente.
+        </p>
+
+        <div>
+          <div class="flow-title">Flujo paso a paso</div>
+          <div class="flow">
+            <div class="step">
+              <div class="step-num">1</div>
+              <div class="step-content">
+                <div class="step-label">RecolecciÃ³n de KPIs multi-departamento</div>
+                <div class="step-detail">El agente accede simultÃ¡neamente a 5 hojas de Google Sheets: Marketing, Ventas, Soporte, Finanzas y RRHH.</div>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">2</div>
+              <div class="step-content">
+                <div class="step-label">AnÃ¡lisis y detecciÃ³n de alertas</div>
+                <div class="step-detail">Calcula KPIs del dÃ­a anterior (contenidos publicados, leads, tickets, gasto, candidatos) y detecta anomalÃ­as: tickets urgentes sin resolver, caÃ­das de leads, gastos inusuales.</div>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">3</div>
+              <div class="step-content">
+                <div class="step-label">GeneraciÃ³n del informe ejecutivo</div>
+                <div class="step-detail">El LLM redacta un informe estructurado en lenguaje natural con resumen, alertas y recomendaciones del dÃ­a.</div>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">4</div>
+              <div class="step-content">
+                <div class="step-label">PublicaciÃ³n en Slack + archivo en Sheets</div>
+                <div class="step-detail">El informe se envÃ­a al canal de direcciÃ³n y se registra en un histÃ³rico de informes en Google Sheets.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="outcomes">
+          <div class="outcomes-title">Resultados clave</div>
+          <div class="outcome-item">Visibilidad 360Â° de la empresa cada maÃ±ana</div>
+          <div class="outcome-item">Alertas proactivas antes de que los problemas escalen</div>
+          <div class="outcome-item">HistÃ³rico de informes para anÃ¡lisis de tendencias</div>
+        </div>
+
+        <div>
+          <div class="flow-title">Herramientas integradas</div>
+          <div class="tools-list">
+            <div class="tool-tag"><span class="dot"></span> n8n Schedule Trigger</div>
+            <div class="tool-tag"><span class="dot"></span> Google Sheets (Ã5 KPIs)</div>
+            <div class="tool-tag"><span class="dot"></span> LangChain Agent</div>
+            <div class="tool-tag"><span class="dot"></span> GPT-4o-mini</div>
+            <div class="tool-tag"><span class="dot"></span> Slack</div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="card-footer">
+        <a class="btn-download" href="Agente_de_Operaciones_n8n_v1.json" download>
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Descargar Workflow â Operaciones
+        </a>
+      </div>
+    </article>
+
+    <!-- ââ 3. RRHH ââ -->
+    <article class="card c-rrhh">
+      <div class="card-header">
+        <div class="icon-wrap">ð§âð¼</div>
+        <div class="card-header-text">
+          <h2>Agente de RRHH</h2>
+          <span class="trigger-badge">ð Webhook Â· Formulario de candidatura</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <p class="card-desc">
+          Pipeline de selecciÃ³n de personal 100% automatizado. Recibe candidaturas por formulario
+          web con CV en PDF, evalÃºa el encaje con el puesto usando IA, y gestiona la comunicaciÃ³n
+          con el candidato y la agenda del entrevistador.
+        </p>
+
+        <div>
+          <div class="flow-title">Flujo paso a paso</div>
+          <div class="flow">
+            <div class="step">
+              <div class="step-num">1</div>
+              <div class="step-content">
+                <div class="step-label">RecepciÃ³n de candidatura (Webhook)</div>
+                <div class="step-detail">El formulario web envÃ­a nombre, email, puesto y el CV en PDF adjunto.</div>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">2</div>
+              <div class="step-content">
+                <div class="step-label">ExtracciÃ³n de texto del CV (PDF)</div>
+                <div class="step-detail">El nodo <em>Extract from File</em> convierte el PDF a texto plano para que el LLM pueda procesarlo.</div>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">3</div>
+              <div class="step-content">
+                <div class="step-label">EvaluaciÃ³n del agente LLM</div>
+                <div class="step-detail">Consulta los requisitos del puesto en la hoja de vacantes activas. EvalÃºa experiencia, habilidades tÃ©cnicas y soft skills. Devuelve un score 0â100 con justificaciÃ³n.</div>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">4</div>
+              <div class="step-content">
+                <div class="step-label">DecisiÃ³n: Â¿Apto para entrevista? (score â¥ 70)</div>
+                <div class="step-detail">BifurcaciÃ³n automÃ¡tica segÃºn el score obtenido.</div>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">5a</div>
+              <div class="step-content">
+                <div class="step-label">Ruta APTO â Agenda + Email de invitaciÃ³n</div>
+                <div class="step-detail">Crea un evento en Google Calendar y envÃ­a email personalizado de invitaciÃ³n a entrevista con el enlace del slot.</div>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">5b</div>
+              <div class="step-content">
+                <div class="step-label">Ruta RECHAZADO â Email de feedback constructivo</div>
+                <div class="step-detail">Redacta y envÃ­a un email de rechazo amable explicando los motivos, en el tono de marca.</div>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">6</div>
+              <div class="step-content">
+                <div class="step-label">Registro en Google Sheets</div>
+                <div class="step-detail">Guarda todos los datos del candidato, el score y el resultado en la base de datos de candidatos.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="outcomes">
+          <div class="outcomes-title">Resultados clave</div>
+          <div class="outcome-item">Screening automatizado en segundos, no dÃ­as</div>
+          <div class="outcome-item">Experiencia de candidato cuidada en ambas rutas</div>
+          <div class="outcome-item">Pipeline de selecciÃ³n trazable y auditable</div>
+        </div>
+
+        <div>
+          <div class="flow-title">Herramientas integradas</div>
+          <div class="tools-list">
+            <div class="tool-tag"><span class="dot"></span> Webhook</div>
+            <div class="tool-tag"><span class="dot"></span> PDF Extractor</div>
+            <div class="tool-tag"><span class="dot"></span> Google Sheets (vacantes)</div>
+            <div class="tool-tag"><span class="dot"></span> LangChain Agent</div>
+            <div class="tool-tag"><span class="dot"></span> GPT-4o-mini</div>
+            <div class="tool-tag"><span class="dot"></span> Google Calendar</div>
+            <div class="tool-tag"><span class="dot"></span> Gmail</div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="card-footer">
+        <a class="btn-download" href="Agente_de_RRHH_n8n_v1.json" download>
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Descargar Workflow â RRHH
+        </a>
+      </div>
+    </article>
+
+    <!-- ââ 4. VENTAS ââ -->
+    <article class="card c-ventas">
+      <div class="card-header">
+        <div class="icon-wrap">ð¼</div>
+        <div class="card-header-text">
+          <h2>Agente de Ventas</h2>
+          <span class="trigger-badge">ð Webhook Â· Formulario de leads</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <p class="card-desc">
+          Cualifica leads en tiempo real con metodologÃ­a BANT, investiga la empresa del prospecto
+          en internet, redacta un email de primer contacto hiperpersonalizado y alerta al equipo
+          de ventas si el lead es caliente.
+        </p>
+
+        <div>
+          <div class="flow-title">Flujo paso a paso</div>
+          <div class="flow">
+            <div class="step">
+              <div class="step-num">1</div>
+              <div class="step-content">
+                <div class="step-label">Captura y normalizaciÃ³n del lead</div>
+                <div class="step-detail">El webhook recibe nombre, email, empresa y mensaje del formulario web. El nodo Set normaliza los campos.</div>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">2</div>
+              <div class="step-content">
+                <div class="step-label">InvestigaciÃ³n con el agente LLM</div>
+                <div class="step-detail">Busca la empresa en la web (SerpAPI), revisa el historial en el CRM (Google Sheets) y aplica criterios BANT para asignar score 0â100 y segmento (caliente / tibio / frÃ­o).</div>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">3</div>
+              <div class="step-content">
+                <div class="step-label">DecisiÃ³n: Â¿Lead cualificado?</div>
+                <div class="step-detail">Si el score supera el umbral, se activa la ruta de contacto activo.</div>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">4</div>
+              <div class="step-content">
+                <div class="step-label">Email personalizado + alerta Slack</div>
+                <div class="step-detail">Se envÃ­a el email de primer contacto redactado por el LLM y se notifica al canal <code>#nubia-ventas</code> con el perfil y score del lead.</div>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">5</div>
+              <div class="step-content">
+                <div class="step-label">Registro en CRM</div>
+                <div class="step-detail">Todos los datos, el score y el segmento quedan registrados en Google Sheets para seguimiento.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="outcomes">
+          <div class="outcomes-title">Resultados clave</div>
+          <div class="outcome-item">Respuesta automÃ¡tica al lead en segundos</div>
+          <div class="outcome-item">El equipo solo atiende leads pre-cualificados</div>
+          <div class="outcome-item">Email de contacto personalizado con contexto real de la empresa</div>
+        </div>
+
+        <div>
+          <div class="flow-title">Herramientas integradas</div>
+          <div class="tools-list">
+            <div class="tool-tag"><span class="dot"></span> Webhook</div>
+            <div class="tool-tag"><span class="dot"></span> LangChain Agent</div>
+            <div class="tool-tag"><span class="dot"></span> GPT-4o-mini</div>
+            <div class="tool-tag"><span class="dot"></span> SerpAPI</div>
+            <div class="tool-tag"><span class="dot"></span> Google Sheets (CRM)</div>
+            <div class="tool-tag"><span class="dot"></span> Gmail</div>
+            <div class="tool-tag"><span class="dot"></span> Slack</div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="card-footer">
+        <a class="btn-download" href="Agente_de_Ventas_n8n_v1.json" download>
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Descargar Workflow â Ventas
+        </a>
+      </div>
+    </article>
+
+    <!-- ââ 5. ATENCIÃN AL CLIENTE ââ -->
+    <article class="card c-soporte">
+      <div class="card-header">
+        <div class="icon-wrap">ð§</div>
+        <div class="card-header-text">
+          <h2>Agente de AtenciÃ³n al Cliente</h2>
+          <span class="trigger-badge">ð§ Gmail Trigger Â· Email de soporte</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <p class="card-desc">
+          Procesa emails de soporte en tiempo real: los clasifica, busca la respuesta en la base
+          de conocimiento y decide de forma autÃ³noma si responde al cliente o escala a un agente
+          humano segÃºn la urgencia y categorÃ­a.
+        </p>
+
+        <div>
+          <div class="flow-title">Flujo paso a paso</div>
+          <div class="flow">
+            <div class="step">
+              <div class="step-num">1</div>
+              <div class="step-content">
+                <div class="step-label">DetecciÃ³n de email entrante (Gmail Trigger)</div>
+                <div class="step-detail">Monitoriza la bandeja de soporte y se activa con cada nuevo mensaje.</div>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">2</div>
+              <div class="step-content">
+                <div class="step-label">AnÃ¡lisis del agente LLM</div>
+                <div class="step-detail">Clasifica en consulta / incidencia / facturaciÃ³n / otro, asigna urgencia (alta / media / baja), busca en FAQ y revisa el historial de tickets del cliente.</div>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">3</div>
+              <div class="step-content">
+                <div class="step-label">Enrutamiento con nodo Switch</div>
+                <div class="step-detail">3 rutas posibles: respuesta automÃ¡tica, escalado a humano, o registro sin acciÃ³n inmediata.</div>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">4a</div>
+              <div class="step-content">
+                <div class="step-label">Ruta AUTO â Respuesta por Gmail</div>
+                <div class="step-detail">Responde al email del cliente directamente con la respuesta redactada por el agente, adjuntando el hilo original.</div>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">4b</div>
+              <div class="step-content">
+                <div class="step-label">Ruta ESCALAR â Alerta en Slack</div>
+                <div class="step-detail">Notifica al canal de soporte con el resumen del ticket, categorÃ­a, urgencia y contexto del cliente para que un agente humano intervenga.</div>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">5</div>
+              <div class="step-content">
+                <div class="step-label">Registro del ticket en Google Sheets</div>
+                <div class="step-detail">Guarda todos los campos del ticket para mÃ©tricas y seguimiento.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="outcomes">
+          <div class="outcomes-title">Resultados clave</div>
+          <div class="outcome-item">Respuesta inmediata 24/7 a consultas frecuentes</div>
+          <div class="outcome-item">Escalado inteligente: los humanos solo ven lo urgente</div>
+          <div class="outcome-item">Trazabilidad completa de todos los tickets</div>
+        </div>
+
+        <div>
+          <div class="flow-title">Herramientas integradas</div>
+          <div class="tools-list">
+            <div class="tool-tag"><span class="dot"></span> Gmail Trigger</div>
+            <div class="tool-tag"><span class="dot"></span> LangChain Agent</div>
+            <div class="tool-tag"><span class="dot"></span> GPT-4o-mini</div>
+            <div class="tool-tag"><span class="dot"></span> Google Sheets (FAQ + Historial)</div>
+            <div class="tool-tag"><span class="dot"></span> Gmail (reply)</div>
+            <div class="tool-tag"><span class="dot"></span> Slack</div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="card-footer">
+        <a class="btn-download" href="Agente_de_Atencion_al_Cliente_n8n_v1.json" download>
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Descargar Workflow â AtenciÃ³n al Cliente
+        </a>
+      </div>
+    </article>
+
+    <!-- ââ 6. FINANZAS ââ -->
+    <article class="card c-finanzas">
+      <div class="card-header">
+        <div class="icon-wrap">ð°</div>
+        <div class="card-header-text">
+          <h2>Agente de Finanzas</h2>
+          <span class="trigger-badge">ð§ Gmail Trigger Â· Facturas recibidas</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <p class="card-desc">
+          Automatiza la contabilizaciÃ³n de facturas desde el email. Extrae datos del PDF,
+          los categoriza con IA, detecta anomalÃ­as y solicita aprobaciÃ³n humana en Slack
+          para importes superiores a 500 â¬.
+        </p>
+
+        <div>
+          <div class="flow-title">Flujo paso a paso</div>
+          <div class="flow">
+            <div class="step">
+              <div class="step-num">1</div>
+              <div class="step-content">
+                <div class="step-label">DetecciÃ³n de factura por email</div>
+                <div class="step-detail">Gmail Trigger monitoriza la bandeja buscando emails con adjuntos PDF de facturas.</div>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">2</div>
+              <div class="step-content">
+                <div class="step-label">ExtracciÃ³n de texto del PDF</div>
+                <div class="step-detail">El nodo Extract from File convierte el PDF de la factura a texto para procesarlo con el LLM.</div>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">3</div>
+              <div class="step-content">
+                <div class="step-label">AnÃ¡lisis del agente LLM</div>
+                <div class="step-detail">Extrae proveedor, NIF, nÃºmero de factura, fecha, base imponible, IVA y total. Consulta el plan de categorÃ­as de gasto y asigna la categorÃ­a. Detecta anomalÃ­as (importes incorrectos, proveedor desconocido, duplicados).</div>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">4</div>
+              <div class="step-content">
+                <div class="step-label">Registro en el libro de gastos</div>
+                <div class="step-detail">Todos los campos estructurados se guardan en Google Sheets con estado <em>pendiente</em>.</div>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">5</div>
+              <div class="step-content">
+                <div class="step-label">CondiciÃ³n: Â¿Importe &gt; 500 â¬?</div>
+                <div class="step-detail">Si el total supera el umbral, se solicita aprobaciÃ³n. Si no, se aprueba automÃ¡ticamente.</div>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">6</div>
+              <div class="step-content">
+                <div class="step-label">AprobaciÃ³n en Slack + actualizaciÃ³n de estado</div>
+                <div class="step-detail">Se envÃ­a un mensaje con los datos de la factura y botones Aprobar / Rechazar. La hoja de gastos se actualiza con el resultado.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="outcomes">
+          <div class="outcomes-title">Resultados clave</div>
+          <div class="outcome-item">ContabilizaciÃ³n automÃ¡tica sin entrada manual de datos</div>
+          <div class="outcome-item">DetecciÃ³n de duplicados y anomalÃ­as en tiempo real</div>
+          <div class="outcome-item">Control de gastos mayores con aprobaciÃ³n en un clic</div>
+        </div>
+
+        <div>
+          <div class="flow-title">Herramientas integradas</div>
+          <div class="tools-list">
+            <div class="tool-tag"><span class="dot"></span> Gmail Trigger</div>
+            <div class="tool-tag"><span class="dot"></span> PDF Extractor</div>
+            <div class="tool-tag"><span class="dot"></span> LangChain Agent</div>
+            <div class="tool-tag"><span class="dot"></span> GPT-4o-mini</div>
+            <div class="tool-tag"><span class="dot"></span> Google Sheets (categorÃ­as + gastos)</div>
+            <div class="tool-tag"><span class="dot"></span> Slack Send & Wait</div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="card-footer">
+        <a class="btn-download" href="Agente_de_Finanzas_n8n_v1.json" download>
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Descargar Workflow â Finanzas
+        </a>
+      </div>
+    </article>
+
+  </div><!-- /grid -->
+
+  <!-- ââ ARQUITECTURA GENERAL ââ -->
+  <h2 class="section-title" style="margin-top:72px">Arquitectura del sistema</h2>
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:32px 28px;">
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:24px;">
+
+      <div>
+        <div style="color:#a39bff;font-weight:700;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px;">ð§  Capa de IA</div>
+        <p style="color:var(--muted);font-size:.88rem;">Todos los agentes usan el nodo <strong style="color:var(--text)">LangChain Agent</strong> de n8n con <strong style="color:var(--text)">GPT-4o-mini</strong> (temp 0.7). Los prompts incluyen un <em>system message</em> con la identidad de marca de Nubia y devuelven JSON estructurado para flujos deterministas.</p>
+      </div>
+
+      <div>
+        <div style="color:#00d4aa;font-weight:700;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px;">ð Triggers</div>
+        <p style="color:var(--muted);font-size:.88rem;">Dos patrones: <strong style="color:var(--text)">Schedule Trigger</strong> para tareas periÃ³dicas (informes y contenido) y <strong style="color:var(--text)">Webhooks / Gmail Trigger</strong> para eventos en tiempo real (leads, candidatos, emails, facturas).</p>
+      </div>
+
+      <div>
+        <div style="color:#ff9f43;font-weight:700;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px;">ð Persistencia</div>
+        <p style="color:var(--muted);font-size:.88rem;"><strong style="color:var(--text)">Google Sheets</strong> actÃºa como base de datos operacional: CRM, calendario editorial, libro de gastos, vacantes y tickets. Los agentes la leen como <em>tool</em> y la escriben con nodos nativos.</p>
+      </div>
+
+      <div>
+        <div style="color:#ff6b6b;font-weight:700;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px;">ð¤ Human-in-the-loop</div>
+        <p style="color:var(--muted);font-size:.88rem;">Los nodos <strong style="color:var(--text)">Slack Send & Wait</strong> insertan puntos de control humano donde el riesgo lo requiere: aprobaciÃ³n de contenido, gastos >500 â¬ y escalado de tickets urgentes.</p>
+      </div>
+
     </div>
   </div>
-  <div class="instrucciones">
-    <h2>&#128196; Como importar un workflow en n8n</h2>
-    <ol class="pasos">
-      <li>Descarga el archivo <strong>.json</strong> del agente que quieras importar haciendo clic en el boton correspondiente.</li>
-      <li>Abre tu instancia de <strong>n8n</strong> y ve al apartado de <em>Workflows</em>.</li>
-      <li>Haz clic en el boton <strong>Importar</strong> (icono de flecha arriba) y selecciona el archivo .json descargado.</li>
-      <li>Revisa y configura tus <strong>credenciales</strong> (API keys, tokens, etc.) segun los nodos que use el workflow.</li>
-      <li>Activa el workflow con el interruptor y ya esta listo para funcionar en tu entorno.</li>
-    </ol>
-  </div>
-  <div class="estadisticas">
-    <h2>&#128202; Resumen del Proyecto</h2>
-    <div class="cuadricula-stats">
-      <div class="dato"><div class="numero">6</div><div class="dato-desc">Agentes de IA</div></div>
-      <div class="dato"><div class="numero">1</div><div class="dato-desc">Empresa cliente</div></div>
-      <div class="dato"><div class="numero">6</div><div class="dato-desc">Departamentos</div></div>
-      <div class="dato"><div class="numero">n8n</div><div class="dato-desc">Plataforma</div></div>
-    </div>
-  </div>
-  <div class="sobre-proyecto">
-    <h2>&#128736; Sobre este Portfolio</h2>
-    <p>Suite completa de automatizacion construida con <strong>n8n</strong> para la empresa <strong>Nubia</strong>. Cada agente esta disenado para un departamento especifico y puede importarse directamente en cualquier instancia de n8n. Todos los workflows son totalmente personalizables y estan listos para usar.</p>
-  </div>
-</div>
+
+</main>
+
 <footer>
-  <p>Creado con &#9889; n8n por <a href="https://github.com/pruebamasterebis-cloud">pruebamasterebis-cloud</a> &middot; 2026</p>
+  Construido con <a href="https://n8n.io" target="_blank">n8n</a> Â· OpenAI Â· Google Workspace Â· Slack
+  &nbsp;Â·&nbsp; Nubia â Agencia de IA y AutomatizaciÃ³n para PYMEs
 </footer>
+
 </body>
 </html>
